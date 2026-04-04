@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Welcome">
+  <section class="relative w-full h-[70vh] rounded-3xl overflow-hidden shadow-2xl group">
+    <div class="absolute inset-0 w-full h-full">
+      <video 
+        autoplay 
+        muted 
+        loop 
+        playsinline
+        class="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-700"
+      >
+        <source src="/videos/students_hanging_out.mp4" type="video/mp4" />
+      </video>
+      <div class="absolute inset-0 bg-gradient-to-t from-hslu-blue-dark/80 via-transparent to-transparent"></div>
+    </div>
+
+    <div class="relative h-full flex flex-col justify-end p-12 text-white">
+      <h1 class="text-6xl font-black mb-4">Life at <span class="text-hslu-orange underline decoration-4 underline-offset-8">HSLU</span></h1>
+      <p class="text-xl max-w-xl text-white/90 mb-8">Discover student-led events, cultural mixers, and official workshops.</p>
+      <div class="flex gap-4">
+        <a href="/explore" class="bg-hslu-orange hover:bg-hslu-orange-light px-8 py-4 rounded-2xl font-bold transition-all shadow-lg">Explore Now</a>
+      </div>
+    </div>
+  </section>
+</Layout>

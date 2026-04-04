@@ -1,17 +1,61 @@
 ---
-
+import Layout from '../layouts/Layout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Welcome">
+  <section class="relative w-full h-[75vh] -mt-6 mb-12 overflow-hidden rounded-[2.5rem] shadow-2xl group">
+    
+    <div class="absolute inset-0 z-0">
+      <video 
+        autoplay 
+        muted 
+        loop 
+        playsinline
+        class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+      >
+        <source src="/videos/students_hanging_out.mp4" type="video/mp4" />
+      </video>
+      <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-hslu-blue/60"></div>
+    </div>
+
+    <div class="relative h-full flex flex-col justify-end p-12 text-white">
+      <h1 class="text-6xl font-black mb-4">Life at <span class="text-hslu-orange underline decoration-4 underline-offset-8">HSLU</span></h1>
+      <p class="text-xl max-w-xl text-white/90 mb-8">Discover student-led events, cultural mixers, and official workshops.</p>
+
+      <div class="flex flex-col sm:flex-row gap-5">
+        <a href="/explore" class="bg-hslu-orange text-white px-10 py-5 rounded-2xl font-black text-xl hover:bg-hslu-orange-light hover:-translate-y-1 transition-all shadow-2xl shadow-orange-500/20">
+          Find an Event
+        </a>
+        <a href="/create" class="glass text-white border border-white/40 px-10 py-5 rounded-2xl font-black text-xl hover:bg-white/20 transition-all shadow-xl">
+          Host Your Own
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center py-16 px-4">
+    <div class="flex flex-col items-center">
+      <div class="w-16 h-16 bg-hslu-blue/10 rounded-2xl flex items-center justify-center mb-4">
+        <span class="text-3xl">🛡️</span>
+      </div>
+      <span class="text-4xl font-black text-hslu-blue tracking-tight">Verified</span>
+      <p class="text-slate-500 font-bold mt-2 uppercase text-xs tracking-widest">HSLU Students Only</p>
+    </div>
+    
+    <div class="flex flex-col items-center">
+      <div class="w-16 h-16 bg-hslu-orange/10 rounded-2xl flex items-center justify-center mb-4">
+        <span class="text-3xl">🎭</span>
+      </div>
+      <span class="text-4xl font-black text-hslu-blue tracking-tight">3 Types</span>
+      <p class="text-slate-500 font-bold mt-2 uppercase text-xs tracking-widest">Public, Private, & Official </p>
+    </div>
+    
+    <div class="flex flex-col items-center">
+      <div class="w-16 h-16 bg-hslu-blue/10 rounded-2xl flex items-center justify-center mb-4">
+        <span class="text-3xl">🚀</span>
+      </div>
+      <span class="text-4xl font-black text-hslu-blue tracking-tight">Real-time</span>
+      <p class="text-slate-500 font-bold mt-2 uppercase text-xs tracking-widest">Spontaneous Interaction</p>
+    </div>
+  </div>
+</Layout>

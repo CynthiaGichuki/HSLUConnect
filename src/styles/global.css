@@ -1,0 +1,30 @@
+/* @import "tailwindcss"; */
+
+/* @theme { */
+  /* HSLU Brand Colors */
+  /* --color-hslu-blue: #005a85; */
+  /* --color-hslu-orange: #ff8c00; */
+  /* --color-hslu-light: #f8fafc; */
+/* } */
+
+@import "tailwindcss";
+
+@theme {
+  /* Refined HSLU Brand Colors */
+  --color-hslu-blue: #005a85;
+  --color-hslu-blue-dark: #003d5b;
+  --color-hslu-orange: #ff8c00;
+  --color-hslu-orange-light: #ffb347;
+  --color-hslu-bg: #f1f5f9;
+  
+  /* Adding a custom font stack for that 'Premium' feel */
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* Custom utility for the 'Glass' effect requested for the UI */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}

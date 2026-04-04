@@ -1,0 +1,76 @@
+---
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
+
+// Prototype data mapping to your Product Scope
+const events = [
+  { 
+    title: "International Student Mixer", 
+    type: "Public", 
+    category: "Social", 
+    date: "April 10, 2026", 
+    location: "Campus Zug-Rotkreuz",
+    spots: 50 
+  },
+  { 
+    title: "Project Management Workshop", 
+    type: "Official", 
+    category: "Academic", 
+    date: "April 15, 2026", 
+    location: "Online (Zoom)",
+    spots: 100 
+  },
+  { 
+    title: "Secret Fondue Night", 
+    type: "Private", 
+    category: "Social", 
+    date: "April 18, 2026", 
+    location: "Invite Only",
+    spots: 10 
+  }
+];
+---
+
+<Layout title="Discover Events">
+  <!-- <header class="mb-12 text-center md:text-left">
+    <h1 class="text-5xl font-extrabold text-slate-800 tracking-tight">
+      Connect with <span class="text-hslu-blue">HSLU</span>
+    </h1>
+  </header> -->
+
+  <section class="flex flex-wrap gap-4 mb-10 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+    <span class="text-sm font-bold text-slate-400 uppercase self-center px-2">Filter by:</span>
+    <button class="px-4 py-2 bg-hslu-blue text-white rounded-xl text-sm font-bold shadow-md shadow-blue-200">All Events</button>
+    <button class="px-4 py-2 hover:bg-slate-100 rounded-xl text-sm font-bold text-slate-600 transition">Public</button>
+    <button class="px-4 py-2 hover:bg-slate-100 rounded-xl text-sm font-bold text-slate-600 transition">Official</button>
+  </section>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {events.map(event => (
+      <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-slate-100 group">
+        <div class="h-32 bg-slate-100 flex items-center justify-center group-hover:bg-hslu-blue/5 transition-colors">
+          <span class="text-4xl">🗓️</span>
+        </div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <span class={`text-[10px] uppercase tracking-widest font-black px-2 py-1 rounded ${
+              event.type === 'Official' ? 'bg-hslu-blue text-white' : 'bg-hslu-orange/10 text-hslu-orange'
+            }`}>
+              {event.type}
+            </span>
+            <span class="text-xs font-bold text-slate-400">{event.category}</span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-800 leading-tight mb-2">{event.title}</h3>
+          <div class="space-y-2 text-sm text-slate-500">
+            <p class="flex items-center gap-2">📍 {event.location}</p>
+            <p class="flex items-center gap-2">📅 {event.date}</p>
+            <p class="flex items-center gap-2 font-medium text-hslu-blue">👥 {event.spots} spots available</p>
+          </div>
+          <button class="mt-6 w-full py-3 bg-slate-50 text-hslu-blue font-bold rounded-xl group-hover:bg-hslu-blue group-hover:text-white transition-all">
+            RSVP Now
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+</Layout>

@@ -1,0 +1,31 @@
+---
+// src/layouts/Layout.
+import '../styles/global.css';
+const { title } = Astro.props;
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title} | HSLUConnect</title>
+  </head>
+  <body class="bg-hslu-light text-slate-900 font-sans">
+    <nav class="bg-hslu-blue text-white p-5 shadow-md flex justify-between items-center sticky top-0 z-50">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-hslu-orange rounded-lg"></div>
+        <a href="/" class="text-2xl font-black tracking-tight">HSLUConnect</a>
+      </div>
+      <div class="hidden md:flex space-x-8 font-medium">
+        <a href="/explore" class="hover:text-hslu-orange transition">Explore</a>
+        <a href="/create" class="bg-hslu-orange px-5 py-2 rounded-full hover:scale-105 transition shadow-lg">Host Event +</a>
+      </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto py-10 px-6">
+      <slot /> </main>
+
+    <footer class="text-center py-10 text-slate-400 text-sm border-t border-slate-200 mt-20">
+      &copy; 2026 MAITPRO Team A - HSLUConnect Project
+    </footer>
+  </body>
+</html>
