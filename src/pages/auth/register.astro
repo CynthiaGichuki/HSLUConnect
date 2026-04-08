@@ -1,0 +1,87 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap } from 'lucide-astro';
+---
+
+<Layout title="Student Access">
+  <div class="bg-white min-h-screen pt-40 pb-24 flex items-center justify-center">
+    <div class="max-w-xl w-full px-8">
+      
+      <header class="text-center mb-12">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-brand-primary/10 rounded-full mb-6">
+          <GraduationCap size={32} class="text-brand-primary" strokeWidth={1.5} />
+        </div>
+        <h1 class="text-4xl font-light text-brand-black tracking-tighter italic mb-3">
+          Join <span class="font-semibold text-brand-primary">HSLUConnect</span>
+        </h1>
+        <p class="text-slate-400 font-light text-sm">
+          A secure space exclusively for the HSLU community.
+        </p>
+      </header>
+
+      <div class="bg-white border border-black/5 rounded-[3rem] p-10 md:p-14 shadow-2xl shadow-black/[0.03]">
+        <form class="space-y-6">
+          
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
+              HSLU Email Address
+            </label>
+            <div class="relative group">
+              <Mail size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
+              <input 
+                type="email" 
+                placeholder="firstname.lastname@stud.hslu.ch"
+                class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
+              Create Password
+            </label>
+            <div class="relative group">
+              <Lock size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
+              <input 
+                type="password" 
+                placeholder="••••••••"
+                class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 p-4 bg-brand-primary/5 rounded-2xl">
+            <ShieldCheck size={16} class="text-brand-primary shrink-0 mt-0.5" />
+            <p class="text-[10px] leading-relaxed text-slate-500 font-medium">
+              By clicking register, you verify that you are a current HSLU student. We will send a confirmation link to your student email.
+            </p>
+          </div>
+
+          <button 
+            type="submit" 
+            class="group w-full py-5 bg-brand-black text-brand-white rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-brand-primary hover:text-brand-black transition-all shadow-xl shadow-black/10"
+          >
+            Create My Account
+            <ArrowRight size={16} class="group-hover:translate-x-1 transition-transform" />
+          </button>
+        </form>
+
+        <div class="mt-10 text-center">
+          <p class="text-xs text-slate-400 font-light">
+            Already have an account? 
+            <a href="/login" class="text-brand-black font-bold hover:text-brand-primary underline underline-offset-4 decoration-brand-primary/30 transition-colors ml-1">
+              Sign In
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <footer class="mt-12 text-center space-x-6">
+        <a href="#" class="text-[9px] uppercase tracking-widest text-slate-300 hover:text-brand-primary transition-colors">Privacy Policy</a>
+        <a href="#" class="text-[9px] uppercase tracking-widest text-slate-300 hover:text-brand-primary transition-colors">Terms of Service</a>
+      </footer>
+    </div>
+  </div>
+</Layout>
