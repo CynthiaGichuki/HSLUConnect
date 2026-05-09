@@ -1,33 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { MapPin, Calendar, Users, Filter, ArrowRight, Search } from 'lucide-astro';
-
-const events = [
-  { 
-    title: "International Student Mixer", 
-    type: "Public", 
-    category: "Social", 
-    date: "April 10, 2026", 
-    location: "Campus Zug-Rotkreuz",
-    spots: 50 
-  },
-  { 
-    title: "Project Management Workshop", 
-    type: "Official", 
-    category: "Academic", 
-    date: "April 15, 2026", 
-    location: "Online (Zoom)",
-    spots: 100 
-  },
-  { 
-    title: "Secret Fondue Night", 
-    type: "Private", 
-    category: "Social", 
-    date: "April 18, 2026", 
-    location: "Invite Only",
-    spots: 10 
-  }
-];
+import { Filter, Search } from 'lucide-astro';
 ---
 
 <Layout title="Explore Events">
@@ -48,69 +21,305 @@ const events = [
       </div>
 
       <div class="flex gap-2">
-        <button class="px-6 py-2.5 bg-brand-black text-brand-white rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-brand-primary hover:text-brand-black">
+        <button data-filter="All" class="filter-button px-6 py-2.5 bg-brand-black text-brand-white rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-brand-primary hover:text-brand-black">
           All
         </button>
-        <button class="px-6 py-2.5 bg-brand-offwhite text-brand-black rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-brand-primary/20">
+        <button data-filter="public" class="filter-button px-6 py-2.5 bg-brand-offwhite text-brand-black rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-brand-primary/20">
           Public
         </button>
-        <button class="px-6 py-2.5 bg-brand-offwhite text-brand-black rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-brand-primary/20">
+        <button data-filter="official" class="filter-button px-6 py-2.5 bg-brand-offwhite text-brand-black rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-brand-primary/20">
           Official
         </button>
       </div>
 
       <div class="flex-1 min-w-[300px] md:ml-auto relative group">
         <Search size={16} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-primary transition-colors" />
-        <input 
-          type="text" 
-          placeholder="Search by keyword, location, or type..." 
+        <input
+          id="search-input"
+          type="text"
+          placeholder="Search by keyword, location, or type..."
           class="w-full bg-brand-offwhite border border-transparent focus:border-brand-primary/30 focus:bg-white rounded-full py-3 pl-12 pr-6 text-sm font-light transition-all outline-none"
         />
       </div>
     </section>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-      {events.map(event => (
+    <p id="events-status" class="text-sm text-slate-400 font-light mb-8">Loading events...</p>
+
+    <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"></div>
+  </div>
+
+  <script>
+    import { supabase } from "../lib/supabase";
+
+    type EventItem = {
+      id: string;
+      title: string;
+      event_type: "public" | "private" | "official";
+      category: string | null;
+      event_date: string;
+      event_time: string | null;
+      location: string | null;
+      participant_limit: number | null;
+      description: string | null;
+    };
+
+    type RSVPItem = {
+      event_id: string;
+      user_id: string;
+      status: "going" | "cancelled";
+    };
+
+    const grid = document.getElementById("events-grid") as HTMLDivElement;
+    const status = document.getElementById("events-status") as HTMLParagraphElement;
+    const searchInput = document.getElementById("search-input") as HTMLInputElement;
+    const filterButtons = document.querySelectorAll<HTMLButtonElement>(".filter-button");
+
+    let events: EventItem[] = [];
+    let activeFilter = "All";
+    let currentUserId: string | null = null;
+    let goingEventIds = new Set<string>();
+    let attendeeCounts = new Map<string, number>();
+
+    function formatEventType(type: string) {
+      return type.charAt(0).toUpperCase() + type.slice(1);
+    }
+
+    function formatDate(dateValue: string) {
+      return new Date(dateValue).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
+    }
+
+    function formatTime(timeValue: string | null) {
+      if (!timeValue) return "";
+      return ` at ${timeValue.slice(0, 5)}`;
+    }
+
+    function eventCard(event: EventItem) {
+      const formattedType = formatEventType(event.event_type);
+      const isGoing = goingEventIds.has(event.id);
+      const attendeeCount = attendeeCounts.get(event.id) ?? 0;
+
+      const spotsText = event.participant_limit
+        ? `${attendeeCount} / ${event.participant_limit} spots filled`
+        : `${attendeeCount} going`;
+
+      const typeClasses = event.event_type === "official"
+        ? "bg-brand-black text-brand-white"
+        : "bg-brand-primary text-brand-black";
+
+      const buttonClasses = isGoing
+        ? "bg-brand-black text-brand-white"
+        : "bg-brand-offwhite text-brand-black hover:bg-brand-black hover:text-brand-white";
+
+      const buttonText = isGoing ? "Going ✓" : "Join Event";
+
+      return `
         <div class="group bg-white rounded-[3rem] border border-black/5 p-10 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-700 flex flex-col min-h-[500px]">
-          
           <div class="flex justify-between items-start mb-10">
-            <span class={`text-[9px] uppercase tracking-[0.2em] font-black px-4 py-2 rounded-full ${
-              event.type === 'Official' ? 'bg-brand-black text-brand-white' : 'bg-brand-primary text-brand-black'
-            }`}>
-              {event.type}
+            <span class="text-[9px] uppercase tracking-[0.2em] font-black px-4 py-2 rounded-full ${typeClasses}">
+              ${formattedType}
             </span>
             <span class="text-[9px] font-black uppercase tracking-widest text-black/20 group-hover:text-brand-primary transition-colors italic">
-              {event.category}
+              ${event.category ?? "General"}
             </span>
           </div>
 
           <div class="flex-grow">
             <h3 class="text-3xl font-light text-brand-black leading-tight mb-8 group-hover:text-brand-primary transition-colors uppercase tracking-tighter italic">
-              {event.title}
+              ${event.title}
             </h3>
             
+            ${event.description ? `<p class="text-slate-500 font-light text-sm leading-relaxed mb-8">${event.description}</p>` : ""}
+
             <div class="space-y-5">
               <div class="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
-                <MapPin size={16} strokeWidth={1} class="text-brand-primary" />
-                {event.location}
+                ${event.location ?? "Location TBC"}
               </div>
+
               <div class="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
-                <Calendar size={16} strokeWidth={1} class="text-brand-primary" />
-                {event.date}
+                ${formatDate(event.event_date)}${formatTime(event.event_time)}
               </div>
+
               <div class="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
-                <Users size={16} strokeWidth={1} class="text-brand-primary" />
-                {event.spots} Spots Available
+                ${spotsText}
               </div>
             </div>
           </div>
 
-          <button class="mt-12 w-full group/btn flex items-center justify-between py-5 px-8 bg-brand-offwhite rounded-2xl text-brand-black font-black uppercase text-[10px] tracking-[0.2em] hover:bg-brand-black hover:text-brand-white transition-all shadow-sm">
-            Join Event
-            <ArrowRight size={18} class="group-hover/btn:translate-x-2 transition-transform" />
+          <button 
+            data-event-id="${event.id}"
+            class="rsvp-button mt-12 w-full group/btn flex items-center justify-between py-5 px-8 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] transition-all shadow-sm ${buttonClasses}"
+          >
+            ${buttonText}
+            <span class="group-hover/btn:translate-x-2 transition-transform">→</span>
           </button>
         </div>
-      ))}
-    </div>
-  </div>
+      `;
+    }
+
+    function updateFilterButtons() {
+      filterButtons.forEach((button) => {
+        const isActive = button.dataset.filter === activeFilter;
+
+        button.classList.toggle("bg-brand-black", isActive);
+        button.classList.toggle("text-brand-white", isActive);
+        button.classList.toggle("bg-brand-offwhite", !isActive);
+        button.classList.toggle("text-brand-black", !isActive);
+      });
+    }
+
+    function attachRSVPListeners() {
+      document.querySelectorAll<HTMLButtonElement>(".rsvp-button").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const eventId = button.dataset.eventId;
+
+          if (!eventId) return;
+
+          if (!currentUserId) {
+            status.textContent = "Please log in to RSVP for an event.";
+            return;
+          }
+
+          button.disabled = true;
+          button.textContent = "Updating...";
+
+          const isGoing = goingEventIds.has(eventId);
+
+          if (isGoing) {
+            const { error } = await supabase
+              .from("event_rsvps")
+              .update({ status: "cancelled" })
+              .eq("event_id", eventId)
+              .eq("user_id", currentUserId);
+
+            if (error) {
+              status.textContent = error.message;
+              button.disabled = false;
+              renderEvents();
+              return;
+            }
+          } else {
+            const { error } = await supabase
+              .from("event_rsvps")
+              .upsert(
+                {
+                  event_id: eventId,
+                  user_id: currentUserId,
+                  status: "going",
+                },
+                {
+                  onConflict: "event_id,user_id",
+                }
+              );
+
+            if (error) {
+              status.textContent = error.message;
+              button.disabled = false;
+              renderEvents();
+              return;
+            }
+          }
+
+          await loadEvents();
+        });
+      });
+    }
+
+    function renderEvents() {
+      const searchTerm = searchInput.value.trim().toLowerCase();
+
+      const filteredEvents = events.filter((event) => {
+        const matchesFilter =
+          activeFilter === "All" || event.event_type === activeFilter;
+
+        const matchesSearch = [
+          event.title,
+          event.event_type,
+          event.category ?? "",
+          event.location ?? "",
+          event.description ?? "",
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(searchTerm);
+
+        return matchesFilter && matchesSearch;
+      });
+
+      if (filteredEvents.length === 0) {
+        grid.innerHTML = "";
+        status.textContent = "No events found yet.";
+        return;
+      }
+
+      status.textContent = "";
+      grid.innerHTML = filteredEvents.map(eventCard).join("");
+      attachRSVPListeners();
+    }
+
+    async function loadSession() {
+      const { data } = await supabase.auth.getSession();
+      currentUserId = data.session?.user?.id ?? null;
+    }
+
+    async function loadEvents() {
+      await loadSession();
+
+      const { data: eventsData, error: eventsError } = await supabase
+        .from("events")
+        .select("id, title, event_type, category, event_date, event_time, location, participant_limit, description")
+        .order("event_date", { ascending: true });
+
+      if (eventsError) {
+        status.textContent = eventsError.message;
+        return;
+      }
+
+      const { data: rsvpData, error: rsvpError } = await supabase
+        .from("event_rsvps")
+        .select("event_id, user_id, status")
+        .eq("status", "going");
+
+      if (rsvpError) {
+        status.textContent = rsvpError.message;
+        return;
+      }
+
+      const rsvps = (rsvpData ?? []) as RSVPItem[];
+
+      events = eventsData ?? [];
+      goingEventIds = new Set(
+        rsvps
+          .filter((rsvp) => rsvp.user_id === currentUserId)
+          .map((rsvp) => rsvp.event_id)
+      );
+
+      attendeeCounts = new Map<string, number>();
+
+      rsvps.forEach((rsvp) => {
+        attendeeCounts.set(
+          rsvp.event_id,
+          (attendeeCounts.get(rsvp.event_id) ?? 0) + 1
+        );
+      });
+
+      renderEvents();
+    }
+
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter ?? "All";
+        updateFilterButtons();
+        renderEvents();
+      });
+    });
+
+    searchInput.addEventListener("input", renderEvents);
+
+    updateFilterButtons();
+    loadEvents();
+  </script>
 </Layout>

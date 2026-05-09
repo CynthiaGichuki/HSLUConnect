@@ -4,7 +4,7 @@ import "../styles/global.css";
 import {
   Youtube,
   Instagram,
-  Twitter, // Added Twitter icon for X
+  Twitter,
 } from "lucide-astro";
 
 const { title } = Astro.props;
@@ -16,6 +16,7 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <title>{title} | HSLUConnect</title>
   </head>
+
   <body class="bg-brand-offwhite text-brand-black font-sans">
     <nav class="fixed top-6 left-0 w-full z-50 px-6">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
@@ -42,11 +43,13 @@ const { title } = Astro.props;
                 <Instagram size={18} strokeWidth={1.5} />
               </div>
             </a>
+
             <a href="https://youtube.com" class="group">
               <div class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-brand-black group-hover:rotate-12 transition-transform shadow-lg">
                 <Youtube size={18} strokeWidth={1.5} />
               </div>
             </a>
+
             <a href="https://twitter.com" class="group">
               <div class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-brand-black group-hover:rotate-12 transition-transform shadow-lg">
                 <Twitter size={18} strokeWidth={1.5} />
@@ -54,12 +57,28 @@ const { title } = Astro.props;
             </a>
           </div>
 
-          <a href="/auth/register" class="bg-brand-primary text-brand-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-brand-white transition-all shadow-lg flex items-center gap-2 whitespace-nowrap">
-            Register Now
-            <div class="bg-white rounded-full p-1 leading-none text-black">
-               <span class="block transform rotate-[-45deg] scale-125">→</span>
-            </div>
+          <a 
+            id="login-link"
+            href="/auth/login" 
+            class="bg-brand-primary text-brand-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-brand-white transition-all shadow-lg flex items-center gap-2 whitespace-nowrap"
+          >
+            Login
           </a>
+
+          <a 
+            id="register-link"
+            href="/auth/register" 
+            class="bg-brand-primary text-brand-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-brand-white transition-all shadow-lg flex items-center gap-2 whitespace-nowrap"
+          >
+            Register
+          </a>
+
+          <button
+            id="logout-button"
+            class="hidden bg-brand-black text-brand-white px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-brand-primary hover:text-brand-black transition-all shadow-lg whitespace-nowrap"
+          >
+            Logout
+          </button>
         </div>
 
       </div>
@@ -72,5 +91,34 @@ const { title } = Astro.props;
     <footer class="text-center py-20 text-slate-400 text-[10px] font-black tracking-[0.3em] uppercase">
       &copy; 2026 MAITPRO Team A
     </footer>
+
+    <script>
+      import { supabase } from "../lib/supabase";
+
+      const loginLink = document.getElementById("login-link") as HTMLAnchorElement;
+      const registerLink = document.getElementById("register-link") as HTMLAnchorElement;
+      const logoutButton = document.getElementById("logout-button") as HTMLButtonElement;
+
+      async function updateNavbar() {
+        const { data } = await supabase.auth.getSession();
+
+        if (data.session) {
+          loginLink.classList.add("hidden");
+          registerLink.classList.add("hidden");
+          logoutButton.classList.remove("hidden");
+        } else {
+          loginLink.classList.remove("hidden");
+          registerLink.classList.remove("hidden");
+          logoutButton.classList.add("hidden");
+        }
+      }
+
+      logoutButton?.addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        window.location.href = "/auth/login";
+      });
+
+      updateNavbar();
+    </script>
   </body>
 </html>

@@ -1,0 +1,128 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { ArrowRight, Mail, Lock, GraduationCap } from 'lucide-astro';
+---
+
+<Layout title="Sign In">
+  <div class="bg-white min-h-screen pt-40 pb-24 flex items-center justify-center">
+    <div class="max-w-xl w-full px-8">
+      
+      <header class="text-center mb-12">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-brand-primary/10 rounded-full mb-6">
+          <GraduationCap size={32} class="text-brand-primary" strokeWidth={1.5} />
+        </div>
+        <h1 class="text-4xl font-light text-brand-black tracking-tighter italic mb-3">
+          Welcome <span class="font-semibold text-brand-primary">Back</span>
+        </h1>
+        <p class="text-slate-400 font-light text-sm">
+          Sign in to access your HSLUConnect account.
+        </p>
+      </header>
+
+      <div class="bg-white border border-black/5 rounded-[3rem] p-10 md:p-14 shadow-2xl shadow-black/[0.03]">
+        <form id="login-form" class="space-y-6">
+          
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
+              HSLU Email Address
+            </label>
+            <div class="relative group">
+              <Mail size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
+              <input 
+                id="email"
+                type="email" 
+                placeholder="firstname.lastname@stud.hslu.ch"
+                class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
+              Password
+            </label>
+            <div class="relative group">
+              <Lock size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
+              <input 
+                id="password"
+                type="password" 
+                placeholder="••••••••"
+                class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
+                required
+              />
+            </div>
+          </div>
+
+          <p id="message" class="hidden text-xs font-medium text-center"></p>
+
+          <button 
+            id="submit-button"
+            type="submit" 
+            class="group w-full py-5 bg-brand-black text-brand-white rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-brand-primary hover:text-brand-black transition-all shadow-xl shadow-black/10 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <span id="submit-text">Sign In</span>
+            <ArrowRight size={16} class="group-hover:translate-x-1 transition-transform" />
+          </button>
+        </form>
+
+        <div class="mt-10 text-center">
+          <p class="text-xs text-slate-400 font-light">
+            Don’t have an account? 
+            <a href="/auth/register" class="text-brand-black font-bold hover:text-brand-primary underline underline-offset-4 decoration-brand-primary/30 transition-colors ml-1">
+              Register
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from "../../lib/supabase";
+
+    const form = document.getElementById("login-form") as HTMLFormElement;
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const passwordInput = document.getElementById("password") as HTMLInputElement;
+    const message = document.getElementById("message") as HTMLParagraphElement;
+    const submitButton = document.getElementById("submit-button") as HTMLButtonElement;
+    const submitText = document.getElementById("submit-text") as HTMLSpanElement;
+
+    function showMessage(text: string, type: "error" | "success") {
+      message.textContent = text;
+      message.classList.remove("hidden", "text-red-500", "text-green-600");
+      message.classList.add(type === "error" ? "text-red-500" : "text-green-600");
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const email = emailInput.value.trim().toLowerCase();
+      const password = passwordInput.value;
+
+      if (!email.endsWith("@stud.hslu.ch")) {
+        showMessage("Please use your HSLU student email ending in @stud.hslu.ch.", "error");
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitText.textContent = "Signing in...";
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        submitButton.disabled = false;
+        submitText.textContent = "Sign In";
+        showMessage(error.message, "error");
+        return;
+      }
+
+      showMessage("Login successful. Redirecting...", "success");
+
+      window.location.href = "/explore";
+    });
+  </script>
+</Layout>

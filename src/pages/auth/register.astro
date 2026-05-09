@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap } from 'lucide-astro';
+import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap, User, MapPin, BookOpen } from 'lucide-astro';
 ---
 
 <Layout title="Student Access">
@@ -20,7 +20,23 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap } from 'lucide-astro
       </header>
 
       <div class="bg-white border border-black/5 rounded-[3rem] p-10 md:p-14 shadow-2xl shadow-black/[0.03]">
-        <form class="space-y-6">
+        <form id="register-form" class="space-y-6">
+
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
+              Full Name
+            </label>
+            <div class="relative group">
+              <User size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
+              <input 
+                id="full_name"
+                type="text"
+                placeholder="Your full name"
+                class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
+                required
+              />
+            </div>
+          </div>
           
           <div class="space-y-2">
             <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
@@ -29,6 +45,7 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap } from 'lucide-astro
             <div class="relative group">
               <Mail size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
               <input 
+                id="email"
                 type="email" 
                 placeholder="firstname.lastname@stud.hslu.ch"
                 class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
@@ -39,18 +56,67 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap } from 'lucide-astro
 
           <div class="space-y-2">
             <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
+              Programme
+            </label>
+            <div class="relative group">
+              <BookOpen size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
+              <input 
+                id="programme"
+                type="text"
+                placeholder="e.g. MSc IT, Digitalisation and Sustainability"
+                class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
+              Campus
+            </label>
+            <div class="relative group">
+              <MapPin size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
+              <input 
+                id="campus"
+                type="text"
+                placeholder="e.g. Rotkreuz"
+                class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
+              Bio
+            </label>
+            <textarea
+              id="bio"
+              rows="3"
+              placeholder="Tell us a little about yourself..."
+              class="w-full bg-brand-offwhite border-none rounded-2xl py-4 px-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all resize-none"
+            ></textarea>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
               Create Password
             </label>
             <div class="relative group">
               <Lock size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
               <input 
+                id="password"
                 type="password" 
                 placeholder="••••••••"
                 class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
                 required
               />
             </div>
+
+            <p class="text-[10px] text-slate-400 ml-1">
+              Must contain 8+ characters, uppercase, lowercase, number, and symbol.
+            </p>
           </div>
+
+          <p id="message" class="hidden text-xs font-medium text-center"></p>
 
           <div class="flex items-start gap-3 p-4 bg-brand-primary/5 rounded-2xl">
             <ShieldCheck size={16} class="text-brand-primary shrink-0 mt-0.5" />
@@ -60,10 +126,11 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap } from 'lucide-astro
           </div>
 
           <button 
+            id="submit-button"
             type="submit" 
-            class="group w-full py-5 bg-brand-black text-brand-white rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-brand-primary hover:text-brand-black transition-all shadow-xl shadow-black/10"
+            class="group w-full py-5 bg-brand-black text-brand-white rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-brand-primary hover:text-brand-black transition-all shadow-xl shadow-black/10 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Create My Account
+            <span id="submit-text">Create My Account</span>
             <ArrowRight size={16} class="group-hover:translate-x-1 transition-transform" />
           </button>
         </form>
@@ -71,17 +138,129 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap } from 'lucide-astro
         <div class="mt-10 text-center">
           <p class="text-xs text-slate-400 font-light">
             Already have an account? 
-            <a href="/login" class="text-brand-black font-bold hover:text-brand-primary underline underline-offset-4 decoration-brand-primary/30 transition-colors ml-1">
+            <a href="/auth/login" class="text-brand-black font-bold hover:text-brand-primary underline underline-offset-4 decoration-brand-primary/30 transition-colors ml-1">
               Sign In
             </a>
           </p>
         </div>
       </div>
-
-      <footer class="mt-12 text-center space-x-6">
-        <a href="#" class="text-[9px] uppercase tracking-widest text-slate-300 hover:text-brand-primary transition-colors">Privacy Policy</a>
-        <a href="#" class="text-[9px] uppercase tracking-widest text-slate-300 hover:text-brand-primary transition-colors">Terms of Service</a>
-      </footer>
     </div>
   </div>
+
+  <script>
+    import { supabase } from "../../lib/supabase";
+
+    const form = document.getElementById("register-form") as HTMLFormElement;
+    const fullNameInput = document.getElementById("full_name") as HTMLInputElement;
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const programmeInput = document.getElementById("programme") as HTMLInputElement;
+    const campusInput = document.getElementById("campus") as HTMLInputElement;
+    const bioInput = document.getElementById("bio") as HTMLTextAreaElement;
+    const passwordInput = document.getElementById("password") as HTMLInputElement;
+    const message = document.getElementById("message") as HTMLParagraphElement;
+    const submitButton = document.getElementById("submit-button") as HTMLButtonElement;
+    const submitText = document.getElementById("submit-text") as HTMLSpanElement;
+
+    function showMessage(text: string, type: "error" | "success") {
+      message.textContent = text;
+      message.classList.remove("hidden", "text-red-500", "text-green-600");
+      message.classList.add(type === "error" ? "text-red-500" : "text-green-600");
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const fullName = fullNameInput.value.trim();
+      const email = emailInput.value.trim().toLowerCase();
+      const programme = programmeInput.value.trim();
+      const campus = campusInput.value.trim();
+      const bio = bioInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!fullName) {
+        showMessage("Please enter your full name.", "error");
+        return;
+      }
+
+      if (!email.endsWith("@stud.hslu.ch")) {
+        showMessage("Please use your HSLU student email ending in @stud.hslu.ch.", "error");
+        return;
+      }
+
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]\\\/`~+=;']).{8,}$/;
+
+      if (!passwordRegex.test(password)) {
+        showMessage(
+          "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol.",
+          "error"
+        );
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitText.textContent = "Creating account...";
+
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/login`,
+          data: {
+            full_name: fullName,
+            programme,
+            campus,
+            bio,
+          },
+        },
+      });
+
+if (error) {
+  submitButton.disabled = false;
+  submitText.textContent = "Create My Account";
+  showMessage(error.message, "error");
+  return;
+}
+
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+
+if (user) {
+  const { error: profileError } = await supabase
+    .from("profiles")
+    .upsert(
+      {
+        id: user.id,
+        full_name: fullName,
+        email: email,
+        programme: programme || null,
+        campus: campus || null,
+        bio: bio || null,
+        role: "student",
+      },
+      {
+        onConflict: "id",
+      }
+    );
+
+    if (profileError) {
+      submitButton.disabled = false;
+      submitText.textContent = "Create My Account";
+      showMessage(profileError.message, "error");
+      return;
+    }
+  }
+
+      submitButton.disabled = false;
+      submitText.textContent = "Create My Account";
+
+      showMessage(
+        "Account created. Please check your HSLU email to confirm your account.",
+        "success"
+      );
+
+      form.reset();
+    });
+  </script>
 </Layout>
