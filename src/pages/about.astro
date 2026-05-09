@@ -9,7 +9,12 @@ const team = [
     focus: "Stakeholder Relations & PMBOK Alignment",
     desc: "Ensures the project remains focused on the MVP while maintaining high-level communication with HSLU stakeholders.",
     image: "/images/buse.jpg",
-    initial: "B"
+    initial: "B",
+    links: {
+      linkedin: "https://www.linkedin.com/in/buse-ozbek",
+      github: "https://github.com/buseozbek",
+      email: "mailto:buse.ozbek@stud.hslu.ch"
+    }
   },
   { 
     name: "Sparsh Sopory", 
@@ -17,7 +22,12 @@ const team = [
     focus: "Budgeting & Quality Assurance",
     desc: "Oversees the project’s financial health and ensures every deliverable meets our rigorous quality standards.",
     image: "/images/sparsh.jpg",
-    initial: "S"
+    initial: "S",
+    links: {
+      linkedin: "https://www.linkedin.com/in/sparsh-sopory",
+      github: "https://github.com/sparshsopory",
+      email: "mailto:sparsh.sopory@stud.hslu.ch"
+    }
   },
   { 
     name: "Naa Lamiorkor Boye", 
@@ -25,7 +35,12 @@ const team = [
     focus: "Systems, Databases & Verification",
     desc: "Architecting the core logic, RSVP systems, and secure student verification processes.",
     image: "/images/naa.jpg",
-    initial: "N"
+    initial: "N",
+    links: {
+      linkedin: "https://www.linkedin.com/in/naa-lamiorkor-boye",
+      github: "https://github.com/Lamiorkor",
+      email: "mailto:naalamiorkor.boye@stud.hslu.ch"
+    }
   },
   { 
     name: "Cynthia Gichuki", 
@@ -33,7 +48,13 @@ const team = [
     focus: "UI/UX & Interactive Interface",
     desc: "Crafting the digital experience and ensuring HSLUConnect is beautiful and intuitive.",
     image: "/images/cynthia.jpg",
-    initial: "C"
+    initial: "C",
+    links: {
+      linkedin: "https://www.linkedin.com/in/cynthia-gichuki",
+      github: "https://github.com/cynthiagichuki",
+      email: "mailto:cynthia.gichuki@stud.hslu.ch"
+    }
+
   }
 ];
 ---
@@ -73,9 +94,9 @@ const team = [
                   <h3 class="text-xl font-bold text-brand-primary mb-1 italic">{member.name}</h3>
                   <p class="text-[10px] uppercase tracking-widest text-white/60 mb-4">{member.focus}</p>
                   <div class="flex gap-4">
-                    <a href="#" class="text-white hover:text-brand-primary transition-colors"><Linkedin size={18} /></a>
-                    <a href="#" class="text-white hover:text-brand-primary transition-colors"><Github size={18} /></a>
-                    <a href="#" class="text-white hover:text-brand-primary transition-colors"><Mail size={18} /></a>
+                    <a href={member.links.linkedin} class="text-white hover:text-brand-primary transition-colors"><Linkedin size={18} /></a>
+                    <a href={member.links.github} class="text-white hover:text-brand-primary transition-colors"><Github size={18} /></a>
+                    <a href={member.links.email} class="text-white hover:text-brand-primary transition-colors"><Mail size={18} /></a>
                   </div>
                 </div>
               </div>
