@@ -1,31 +1,76 @@
 ---
-// src/layouts/Layout.
-import '../styles/global.css';
+// src/layouts/Layout.astro
+import "../styles/global.css";
+import {
+  Youtube,
+  Instagram,
+  Twitter, // Added Twitter icon for X
+} from "lucide-astro";
+
 const { title } = Astro.props;
 ---
+
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>{title} | HSLUConnect</title>
   </head>
-  <body class="bg-hslu-light text-slate-900 font-sans">
-    <nav class="bg-hslu-blue text-white p-5 shadow-md flex justify-between items-center sticky top-0 z-50">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-hslu-orange rounded-lg"></div>
-        <a href="/" class="text-2xl font-black tracking-tight">HSLUConnect</a>
-      </div>
-      <div class="hidden md:flex space-x-8 font-medium">
-        <a href="/explore" class="hover:text-hslu-orange transition">Explore</a>
-        <a href="/create" class="bg-hslu-orange px-5 py-2 rounded-full hover:scale-105 transition shadow-lg">Host Event +</a>
+  <body class="bg-brand-offwhite text-brand-black font-sans">
+    <nav class="fixed top-6 left-0 w-full z-50 px-6">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        
+        <a href="/" class="flex items-center gap-2 group shrink-0">
+          <div class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center font-black text-brand-black group-hover:rotate-12 transition-transform">
+            H
+          </div>
+          <span class="text-xl font-black tracking-tighter text-white">HSLUConnect</span>
+        </a>
+
+        <div class="hidden lg:flex items-center bg-white/90 backdrop-blur-md px-10 py-3 rounded-full shadow-xl border border-white/20 gap-8 mx-4">
+          <a href="/" class="text-[10px] font-black hover:text-brand-primary transition uppercase tracking-[0.2em]">Home</a>
+          <a href="/explore" class="text-[10px] font-black hover:text-brand-primary transition uppercase tracking-[0.2em]">Explore</a>
+          <a href="/create" class="text-[10px] font-black hover:text-brand-primary transition uppercase tracking-[0.2em]">Host</a>
+          <a href="/about" class="text-[10px] font-black hover:text-brand-primary transition uppercase tracking-[0.2em]">About Us</a>
+          <a href="/contact" class="text-[10px] font-black hover:text-brand-primary transition uppercase tracking-[0.2em]">Contact</a>
+        </div>
+
+        <div class="flex items-center gap-6">
+          <div class="hidden md:flex items-center gap-3">
+            <a href="https://instagram.com" class="group">
+              <div class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-brand-black group-hover:rotate-12 transition-transform shadow-lg">
+                <Instagram size={18} strokeWidth={1.5} />
+              </div>
+            </a>
+            <a href="https://youtube.com" class="group">
+              <div class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-brand-black group-hover:rotate-12 transition-transform shadow-lg">
+                <Youtube size={18} strokeWidth={1.5} />
+              </div>
+            </a>
+            <a href="https://twitter.com" class="group">
+              <div class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-brand-black group-hover:rotate-12 transition-transform shadow-lg">
+                <Twitter size={18} strokeWidth={1.5} />
+              </div>
+            </a>
+          </div>
+
+          <a href="/auth/register" class="bg-brand-primary text-brand-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-brand-white transition-all shadow-lg flex items-center gap-2 whitespace-nowrap">
+            Register Now
+            <div class="bg-white rounded-full p-1 leading-none text-black">
+               <span class="block transform rotate-[-45deg] scale-125">→</span>
+            </div>
+          </a>
+        </div>
+
       </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto py-10 px-6">
-      <slot /> </main>
+    <main>
+      <slot />
+    </main>
 
-    <footer class="text-center py-10 text-slate-400 text-sm border-t border-slate-200 mt-20">
-      &copy; 2026 MAITPRO Team A - HSLUConnect Project
+    <footer class="text-center py-20 text-slate-400 text-[10px] font-black tracking-[0.3em] uppercase">
+      &copy; 2026 MAITPRO Team A
     </footer>
   </body>
 </html>

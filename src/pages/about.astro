@@ -1,0 +1,108 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Github, Linkedin, Mail, Heart, Rocket, Target } from 'lucide-astro';
+
+const team = [
+  { 
+    name: "Buse Özbek", 
+    role: "Project Coordinator", 
+    focus: "Stakeholder Relations & PMBOK Alignment",
+    desc: "Ensures the project remains focused on the MVP while maintaining high-level communication with HSLU stakeholders.",
+    image: "/images/buse.jpg",
+    initial: "B"
+  },
+  { 
+    name: "Sparsh Sopory", 
+    role: "Finance & Quality", 
+    focus: "Budgeting & Quality Assurance",
+    desc: "Oversees the project’s financial health and ensures every deliverable meets our rigorous quality standards.",
+    image: "/images/sparsh.jpg",
+    initial: "S"
+  },
+  { 
+    name: "Naa Lamiorkor Boye", 
+    role: "Backend Developer", 
+    focus: "Systems, Databases & Verification",
+    desc: "Architecting the core logic, RSVP systems, and secure student verification processes.",
+    image: "/images/naa.jpg",
+    initial: "N"
+  },
+  { 
+    name: "Cynthia Gichuki", 
+    role: "Frontend Developer", 
+    focus: "UI/UX & Interactive Interface",
+    desc: "Crafting the digital experience and ensuring HSLUConnect is beautiful and intuitive.",
+    image: "/images/cynthia.jpg",
+    initial: "C"
+  }
+];
+---
+
+<Layout title="About Us">
+  <div class="bg-creamy-melt min-h-screen pt-40 pb-24">
+    <div class="max-w-7xl mx-auto px-8">
+      
+      <header class="max-w-3xl mb-24">
+        <h1 class="text-5xl md:text-6xl font-light text-brand-black tracking-tighter mb-8 italic">
+          Our <span class="font-semibold text-brand-primary">Motivation</span>
+        </h1>
+        <p class="text-xl text-slate-500 font-light leading-relaxed">
+          HSLUConnect was born from a simple observation: student life is fragmented. We wanted to build a centralized 
+          digital space that promotes social inclusion and intercultural interaction among HSLU students.
+        </p>
+      </header>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-32">
+        {team.map(member => (
+          <div class="group h-[480px] perspective-1000">
+            <div class="relative h-full w-full transition-all duration-700 preserve-3d group-hover:rotate-y-180 cursor-pointer">
+              
+              <div class="absolute inset-0 h-full w-full backface-hidden bg-white/60 backdrop-blur-xl rounded-[2.5rem] p-8 border border-white/40 shadow-sm flex flex-col items-center text-center">
+                <div class="w-24 h-24 bg-brand-primary/20 rounded-full mb-6 flex items-center justify-center text-brand-primary group-hover:scale-110 transition-transform">
+                  <span class="text-2xl font-bold">{member.initial}</span>
+                </div>
+                <h3 class="text-xl font-bold text-brand-black mb-1">{member.name}</h3>
+                <p class="text-[10px] uppercase tracking-[0.2em] text-brand-primary font-black mb-4">{member.role}</p>
+                <p class="text-sm text-slate-500 font-light leading-relaxed mb-8">{member.desc}</p>
+                <p class="mt-auto text-[9px] text-brand-primary/40 uppercase font-black tracking-widest">Hover to see photo</p>
+              </div>
+
+              <div class="absolute inset-0 h-full w-full backface-hidden rotate-y-180 bg-brand-black rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <img src={member.image} alt={member.name} class="absolute inset-0 h-full w-full object-cover opacity-70" />
+                <div class="relative h-full w-full p-8 flex flex-col justify-end bg-gradient-to-t from-black via-black/20 to-transparent">
+                  <h3 class="text-xl font-bold text-brand-primary mb-1 italic">{member.name}</h3>
+                  <p class="text-[10px] uppercase tracking-widest text-white/60 mb-4">{member.focus}</p>
+                  <div class="flex gap-4">
+                    <a href="#" class="text-white hover:text-brand-primary transition-colors"><Linkedin size={18} /></a>
+                    <a href="#" class="text-white hover:text-brand-primary transition-colors"><Github size={18} /></a>
+                    <a href="#" class="text-white hover:text-brand-primary transition-colors"><Mail size={18} /></a>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 py-20 border-t border-black/5">
+        <div class="space-y-4">
+          <Target class="text-brand-primary" size={32} strokeWidth={1} />
+          <h4 class="text-2xl font-light italic">The Objective</h4>
+          <p class="text-sm text-slate-500 font-light">Apply PMBOK principles in planning and execution to deliver a functional prototype that improves event visibility.</p>
+        </div>
+        <div class="space-y-4">
+          <Heart class="text-brand-primary" size={32} strokeWidth={1} />
+          <h4 class="text-2xl font-light italic">The Values</h4>
+          <p class="text-sm text-slate-500 font-light">Promoting peer-to-peer, spontaneous interaction to foster an inclusive student engagement ecosystem.</p>
+        </div>
+        <div class="space-y-4">
+          <Rocket class="text-brand-primary" size={32} strokeWidth={1} />
+          <h4 class="text-2xl font-light italic">The Future</h4>
+          <p class="text-sm text-slate-500 font-light">Building a scalable foundation for future enhancements like real-time messaging and Al-driven recommendations.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</Layout>
