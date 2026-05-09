@@ -114,7 +114,11 @@ import { Filter, Search } from 'lucide-astro';
         ? "bg-brand-black text-brand-white"
         : "bg-brand-offwhite text-brand-black hover:bg-brand-black hover:text-brand-white";
 
-      const buttonText = isGoing ? "Going ✓" : "Join Event";
+      const buttonText = !currentUserId
+        ? "Login to Join"
+        : isGoing
+          ? "Going ✓"
+          : "Join Event";
 
       return `
         <div class="group bg-white rounded-[3rem] border border-black/5 p-10 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-700 flex flex-col min-h-[500px]">
@@ -180,6 +184,13 @@ import { Filter, Search } from 'lucide-astro';
 
           if (!currentUserId) {
             status.textContent = "Please log in to RSVP for an event.";
+            status.classList.remove("text-slate-400");
+            status.classList.add("text-red-500");
+
+            setTimeout(() => {
+              window.location.href = "/auth/login";
+            }, 1200);
+
             return;
           }
 

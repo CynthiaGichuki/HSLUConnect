@@ -45,9 +45,9 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
               <select id="event_type" class="w-full bg-brand-offwhite border-none rounded-2xl p-5 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 transition-all outline-none appearance-none cursor-pointer" required>
                 <option value="public">Public Event</option>
                 <option value="private">Private (Invite Only)</option>
-                <option value="official">Official Workshop</option>
+                <option value="official" id="official-option">Official Workshop</option>
               </select>
-              <p class="mt-2 text-[9px] text-slate-400 flex items-center gap-1">
+              <p id="event-type-help" class="mt-2 text-[9px] text-slate-400 flex items-center gap-1">
                 <Info size={10} /> Public events are visible to all students.
               </p>
             </div>
@@ -174,12 +174,58 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
     const message = document.getElementById("message") as HTMLParagraphElement;
     const submitButton = document.getElementById("submit-button") as HTMLButtonElement;
     const submitText = document.getElementById("submit-text") as HTMLSpanElement;
+    const officialOption = document.getElementById("official-option") as HTMLOptionElement;
+    const eventTypeHelp = document.getElementById("event-type-help") as HTMLParagraphElement;
+
+    let currentUserRole: string | null = null;
 
     function showMessage(text: string, type: "error" | "success") {
       message.textContent = text;
       message.classList.remove("hidden", "text-red-500", "text-green-600");
       message.classList.add(type === "error" ? "text-red-500" : "text-green-600");
     }
+
+    async function loadUserRole() {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData.session?.user;
+
+      if (!user) {
+        showMessage("Please log in before hosting an event.", "error");
+
+        setTimeout(() => {
+          window.location.href = "/auth/login";
+        }, 1200);
+
+        return;
+      }
+
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        showMessage(error.message, "error");
+        return;
+      }
+
+      currentUserRole = profile?.role ?? "student";
+
+      if (currentUserRole !== "admin") {
+        officialOption?.remove();
+
+        if (eventTypeInput.value === "official") {
+          eventTypeInput.value = "public";
+        }
+
+        eventTypeHelp.innerHTML = "Students can create public and private events only.";
+      } else {
+        eventTypeHelp.innerHTML = "Admins can create public, private, and official events.";
+      }
+    }
+
+    loadUserRole();
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -189,6 +235,11 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
 
       if (!user) {
         showMessage("Please log in before publishing an event.", "error");
+
+        setTimeout(() => {
+          window.location.href = "/auth/login";
+        }, 1200);
+
         return;
       }
 
@@ -210,6 +261,28 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
 
       submitButton.disabled = true;
       submitText.textContent = "Publishing...";
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) {
+        submitButton.disabled = false;
+        submitText.textContent = "Publish Event";
+        showMessage(profileError.message, "error");
+        return;
+      }
+
+      const role = profile?.role ?? "student";
+
+      if (event_type === "official" && role !== "admin") {
+        submitButton.disabled = false;
+        submitText.textContent = "Publish Event";
+        showMessage("Only admins can create official events.", "error");
+        return;
+      }
 
       const { error } = await supabase.from("events").insert({
         title,
@@ -237,6 +310,10 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
       );
 
       form.reset();
+
+      if (role !== "admin") {
+        eventTypeInput.value = "public";
+      }
     });
   </script>
 </Layout>
