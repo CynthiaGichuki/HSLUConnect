@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { Youtube, Instagram, Twitter, User, LogOut, ChevronDown } from "lucide-astro";
+import { Youtube, Instagram, Twitter, User, LogOut, ChevronDown, ShieldCheck } from "lucide-astro";
 
 const { title } = Astro.props;
 ---
@@ -60,6 +60,13 @@ const { title } = Astro.props;
 
               <div class="absolute right-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0">
                 <div class="bg-white rounded-[1.5rem] shadow-2xl border border-black/5 overflow-hidden w-48 p-2">
+                  <a
+                    id="admin-link"
+                    href="/admin"
+                    class="hidden flex items-center gap-3 px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-offwhite rounded-xl transition-colors"
+                  >
+                    <ShieldCheck size={14} class="text-brand-primary" /> Admin Dashboard
+                  </a>
                   <a href="/profile" class="flex items-center gap-3 px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-offwhite rounded-xl transition-colors">
                     <User size={14} class="text-brand-primary" /> Profile
                   </a>
@@ -83,18 +90,34 @@ const { title } = Astro.props;
       const userMenu = document.getElementById("user-menu");
       const logoutBtn = document.getElementById("logout-btn");
       const hostLink = document.getElementById("host-link");
+      const adminLink = document.getElementById("admin-link");
 
       async function updateNavbar() {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
 
         if (session) {
           loggedOutGroup?.classList.add("hidden");
           userMenu?.classList.remove("hidden");
           hostLink?.classList.remove("hidden");
+
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", session.user.id)
+            .single();
+
+          if (profile?.role === "admin") {
+            adminLink?.classList.remove("hidden");
+          } else {
+            adminLink?.classList.add("hidden");
+          }
         } else {
           loggedOutGroup?.classList.remove("hidden");
           userMenu?.classList.add("hidden");
           hostLink?.classList.add("hidden");
+          adminLink?.classList.add("hidden");
         }
       }
 

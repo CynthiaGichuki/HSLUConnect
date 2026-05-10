@@ -1,31 +1,16 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Calendar, 
-  Settings, 
-  ShieldCheck, 
-  Bell, 
+import {
+  LayoutDashboard,
+  Users,
+  Calendar,
+  ShieldCheck,
   Search,
   ArrowUpRight,
-  MoreHorizontal,
-  Activity
+  Activity,
+  Trash2,
+  Eye
 } from 'lucide-astro';
-
-const menuItems = [
-  { name: 'Overview', icon: LayoutDashboard, active: true },
-  { name: 'Events Control', icon: Calendar, active: false },
-  { name: 'Student Directory', icon: Users, active: false },
-  { name: 'Verification Queue', icon: ShieldCheck, active: false },
-  { name: 'System Settings', icon: Settings, active: false },
-];
-
-const recentActivity = [
-  { user: "Gauri Nair", action: "Created 'Study Night'", time: "2 mins ago" },
-  { user: "Sparsh Sopory", action: "Verified 12 students", time: "1 hour ago" },
-  { user: "System", action: "Database Backup Complete", time: "3 hours ago" },
-];
 ---
 
 <Layout title="Admin Panel">
@@ -37,21 +22,25 @@ const recentActivity = [
       </div>
       
       <nav class="flex-grow px-4 space-y-2">
-        {menuItems.map(item => (
-          <a href="#" class={`flex items-center gap-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
-            item.active ? 'bg-white text-brand-black shadow-sm' : 'text-slate-400 hover:bg-white/50 hover:text-brand-primary'
-          }`}>
-            <item.icon size={18} strokeWidth={item.active ? 2.5 : 1.5} />
-            {item.name}
-          </a>
-        ))}
+        <button data-section="overview" class="admin-tab w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-white text-brand-black shadow-sm">
+          <LayoutDashboard size={18} /> Overview
+        </button>
+
+        <button data-section="events" class="admin-tab w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-white/50 hover:text-brand-primary">
+          <Calendar size={18} /> Events Control
+        </button>
+
+        <button data-section="users" class="admin-tab w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-white/50 hover:text-brand-primary">
+          <Users size={18} /> Student Directory
+        </button>
       </nav>
 
       <div class="px-8 border-t border-black/5 pt-8">
         <div class="bg-brand-primary/10 rounded-2xl p-6">
-          <p class="text-[9px] font-black text-brand-primary uppercase mb-2">Pro Version</p>
-          <p class="text-[11px] text-brand-black font-medium leading-relaxed mb-4">You are using the MAITPRO Team A Prototype.</p>
-          <button class="text-[9px] font-black uppercase text-brand-black border-b border-brand-black">View Docs</button>
+          <p class="text-[9px] font-black text-brand-primary uppercase mb-2">Admin Access</p>
+          <p class="text-[11px] text-brand-black font-medium leading-relaxed">
+            Supabase-powered control center for HSLUConnect.
+          </p>
         </div>
       </div>
     </aside>
@@ -60,79 +49,431 @@ const recentActivity = [
       
       <div class="flex justify-between items-center mb-16">
         <div>
-          <h1 class="text-4xl font-light text-brand-black tracking-tighter italic">Platform <span class="font-semibold text-brand-primary">Command</span></h1>
-          <p class="text-slate-400 text-sm font-light mt-1">Welcome back, Admin Cynthia.</p>
+          <h1 class="text-4xl font-light text-brand-black tracking-tighter italic">
+            Platform <span class="font-semibold text-brand-primary">Command</span>
+          </h1>
+          <p id="admin-welcome" class="text-slate-400 text-sm font-light mt-1">Checking admin access...</p>
         </div>
         
-        <div class="flex items-center gap-4">
-          <div class="relative">
-            <Search class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-            <input type="text" placeholder="Search data..." class="bg-brand-offwhite border-none rounded-full py-3 pl-12 pr-6 text-xs outline-none w-64 focus:ring-2 focus:ring-brand-primary/20 transition-all" />
-          </div>
-          <button class="w-12 h-12 bg-brand-offwhite rounded-full flex items-center justify-center text-slate-400 hover:text-brand-primary transition-colors border border-black/5">
-            <Bell size={20} />
-          </button>
+        <div class="relative">
+          <Search class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+          <input
+            id="admin-search"
+            type="text"
+            placeholder="Search events or users..."
+            class="bg-brand-offwhite border-none rounded-full py-3 pl-12 pr-6 text-xs outline-none w-72 focus:ring-2 focus:ring-brand-primary/20 transition-all"
+          />
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-        <div class="bg-white border border-black/5 p-8 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all">
-          <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Total RSVP's</p>
-          <p class="text-5xl font-light italic text-brand-black">1,284</p>
-          <div class="mt-4 flex items-center gap-2 text-green-500 text-[10px] font-bold">
-            <ArrowUpRight size={14} /> +24% from last semester
-          </div>
-        </div>
-        <div class="bg-white border border-black/5 p-8 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all">
-          <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Active Events</p>
-          <p class="text-5xl font-light italic text-brand-black">56</p>
-          <div class="mt-4 flex items-center gap-2 text-brand-primary text-[10px] font-bold">
-            12 awaiting verification
-          </div>
-        </div>
-        <div class="bg-brand-black p-8 rounded-[3rem] shadow-2xl text-white">
-          <p class="text-[10px] font-black uppercase tracking-widest text-brand-primary mb-2">System Status</p>
-          <p class="text-3xl font-light italic text-white">Operational</p>
-          <div class="mt-6 flex gap-1">
-            <div class="h-1 w-full bg-brand-primary rounded-full"></div>
-            <div class="h-1 w-full bg-brand-primary rounded-full"></div>
-            <div class="h-1 w-full bg-brand-primary/20 rounded-full"></div>
-          </div>
-        </div>
-      </div>
+      <p id="admin-status" class="text-sm text-slate-400 mb-8">Loading dashboard...</p>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        
+      <section id="overview-section" class="admin-section">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+          <div class="bg-white border border-black/5 p-8 rounded-[2.5rem] shadow-sm">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Total Users</p>
+            <p id="total-users" class="text-5xl font-light italic text-brand-black">0</p>
+          </div>
+
+          <div class="bg-white border border-black/5 p-8 rounded-[2.5rem] shadow-sm">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Total Events</p>
+            <p id="total-events" class="text-5xl font-light italic text-brand-black">0</p>
+          </div>
+
+          <div class="bg-white border border-black/5 p-8 rounded-[2.5rem] shadow-sm">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Total RSVPs</p>
+            <p id="total-rsvps" class="text-5xl font-light italic text-brand-black">0</p>
+          </div>
+
+          <div class="bg-brand-black border border-black/5 p-8 rounded-[2.5rem] shadow-sm min-h-[205px] flex flex-col justify-between">
+            <div>
+              <p class="text-[10px] font-black uppercase tracking-widest text-brand-primary mb-4">
+                System Status
+              </p>
+              <p class="text-2xl font-light italic text-white">
+                Operational
+              </p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+              <span class="text-[10px] font-black uppercase tracking-widest text-white/50">
+                Supabase Connected
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div class="bg-white rounded-[3rem] border border-black/5 p-10">
+            <h3 class="text-xl font-bold italic tracking-tight mb-8">Recent Events</h3>
+            <div id="recent-events" class="space-y-5"></div>
+          </div>
+
+          <div class="bg-brand-offwhite rounded-[3rem] border border-black/5 p-10 flex flex-col items-center justify-center text-center">
+            <Activity size={48} strokeWidth={1} class="text-brand-primary mb-6" />
+            <h3 class="text-lg font-bold italic text-brand-black mb-2">Live Platform Metrics</h3>
+            <p class="text-xs text-slate-500 font-light max-w-[260px]">
+              Dashboard values are now pulled directly from Supabase.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="events-section" class="admin-section hidden">
         <div class="bg-white rounded-[3rem] border border-black/5 p-10">
-          <div class="flex justify-between items-center mb-10">
-            <h3 class="text-xl font-bold italic tracking-tight">Recent Activity</h3>
-            <MoreHorizontal size={20} class="text-slate-300" />
-          </div>
-          <div class="space-y-8">
-            {recentActivity.map(item => (
-              <div class="flex items-center justify-between border-b border-black/5 pb-6 last:border-0 last:pb-0">
-                <div class="flex items-center gap-4">
-                  <div class="w-10 h-10 bg-brand-offwhite rounded-full flex items-center justify-center font-bold text-[10px] text-brand-primary">
-                    {item.user.charAt(0)}
-                  </div>
-                  <div>
-                    <p class="text-xs font-bold text-brand-black">{item.user}</p>
-                    <p class="text-[11px] text-slate-400 font-light">{item.action}</p>
-                  </div>
-                </div>
-                <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest">{item.time}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+          <h2 class="text-2xl font-light italic text-brand-black mb-8">
+            All <span class="font-semibold text-brand-primary">Events</span>
+          </h2>
 
-        <div class="bg-brand-offwhite rounded-[3rem] border border-black/5 p-10 flex flex-col items-center justify-center text-center">
-          <Activity size={48} strokeWidth={1} class="text-brand-primary mb-6" />
-          <h3 class="text-lg font-bold italic text-brand-black mb-2">Data Analytics</h3>
-          <p class="text-xs text-slate-500 font-light max-w-[200px]">Interactive charts for student engagement will be rendered here.</p>
+          <div id="events-table" class="space-y-4"></div>
         </div>
+      </section>
 
-      </div>
+      <section id="users-section" class="admin-section hidden">
+        <div class="bg-white rounded-[3rem] border border-black/5 p-10">
+          <h2 class="text-2xl font-light italic text-brand-black mb-8">
+            Student <span class="font-semibold text-brand-primary">Directory</span>
+          </h2>
+
+          <div id="users-table" class="space-y-4"></div>
+        </div>
+      </section>
+
     </main>
   </div>
+
+  <script>
+    import { supabase } from "../../lib/supabase";
+
+    type Profile = {
+      id: string;
+      full_name: string | null;
+      email: string | null;
+      programme: string | null;
+      campus: string | null;
+      role: string | null;
+    };
+
+    type EventItem = {
+      id: string;
+      title: string;
+      event_type: string;
+      category: string | null;
+      event_date: string;
+      event_time: string | null;
+      location: string | null;
+      participant_limit: number | null;
+      created_by: string;
+    };
+
+    type RSVPItem = {
+      event_id: string;
+      user_id: string;
+      status: string;
+    };
+
+    const adminWelcome = document.getElementById("admin-welcome") as HTMLParagraphElement;
+    const adminStatus = document.getElementById("admin-status") as HTMLParagraphElement;
+    const adminSearch = document.getElementById("admin-search") as HTMLInputElement;
+
+    const totalUsers = document.getElementById("total-users") as HTMLParagraphElement;
+    const totalEvents = document.getElementById("total-events") as HTMLParagraphElement;
+    const totalRsvps = document.getElementById("total-rsvps") as HTMLParagraphElement;
+
+    const recentEvents = document.getElementById("recent-events") as HTMLDivElement;
+    const eventsTable = document.getElementById("events-table") as HTMLDivElement;
+    const usersTable = document.getElementById("users-table") as HTMLDivElement;
+
+    const tabs = document.querySelectorAll<HTMLButtonElement>(".admin-tab");
+    const sections = document.querySelectorAll<HTMLElement>(".admin-section");
+
+    let profiles: Profile[] = [];
+    let events: EventItem[] = [];
+    let rsvps: RSVPItem[] = [];
+
+    function escapeHtml(value: string) {
+      return value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatDate(dateValue: string) {
+      return new Date(dateValue).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    }
+
+    function getCreatorName(userId: string) {
+      const creator = profiles.find((profile) => profile.id === userId);
+      return creator?.full_name || creator?.email || "Unknown creator";
+    }
+
+    function getEventRsvpCount(eventId: string) {
+      return rsvps.filter((rsvp) => rsvp.event_id === eventId && rsvp.status === "going").length;
+    }
+
+    function switchSection(sectionName: string) {
+      tabs.forEach((tab) => {
+        const isActive = tab.dataset.section === sectionName;
+
+        tab.classList.toggle("bg-white", isActive);
+        tab.classList.toggle("text-brand-black", isActive);
+        tab.classList.toggle("shadow-sm", isActive);
+        tab.classList.toggle("text-slate-400", !isActive);
+      });
+
+      sections.forEach((section) => {
+        section.classList.toggle("hidden", section.id !== `${sectionName}-section`);
+      });
+    }
+
+    function renderOverview() {
+      totalUsers.textContent = String(profiles.length);
+      totalEvents.textContent = String(events.length);
+      totalRsvps.textContent = String(rsvps.filter((rsvp) => rsvp.status === "going").length);
+
+      const latestEvents = [...events]
+        .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime())
+        .slice(0, 5);
+
+      if (latestEvents.length === 0) {
+        recentEvents.innerHTML = `<p class="text-xs text-slate-400">No events yet.</p>`;
+        return;
+      }
+
+      recentEvents.innerHTML = latestEvents.map((event) => `
+        <div class="flex items-center justify-between border-b border-black/5 pb-5 last:border-0">
+          <div>
+            <p class="text-sm font-bold text-brand-black">${escapeHtml(event.title)}</p>
+            <p class="text-[11px] text-slate-400">${formatDate(event.event_date)} • ${escapeHtml(event.location ?? "Location TBC")}</p>
+          </div>
+
+          <span class="text-[9px] font-black uppercase tracking-widest text-brand-primary">
+            ${getEventRsvpCount(event.id)} RSVPs
+          </span>
+        </div>
+      `).join("");
+    }
+
+    function renderEventsTable() {
+      const searchTerm = adminSearch.value.trim().toLowerCase();
+
+      const filteredEvents = events.filter((event) => {
+        return [
+          event.title,
+          event.event_type,
+          event.category ?? "",
+          event.location ?? "",
+          getCreatorName(event.created_by),
+        ].join(" ").toLowerCase().includes(searchTerm);
+      });
+
+      if (filteredEvents.length === 0) {
+        eventsTable.innerHTML = `<p class="text-xs text-slate-400">No events found.</p>`;
+        return;
+      }
+
+      eventsTable.innerHTML = filteredEvents.map((event) => `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center bg-brand-offwhite rounded-[2rem] p-6 border border-black/5">
+          <div class="lg:col-span-4">
+            <p class="font-bold text-brand-black">${escapeHtml(event.title)}</p>
+            <p class="text-[11px] text-slate-400 mt-1">${escapeHtml(getCreatorName(event.created_by))}</p>
+          </div>
+
+          <div class="lg:col-span-2 text-xs text-slate-500">
+            ${escapeHtml(event.event_type)}
+          </div>
+
+          <div class="lg:col-span-2 text-xs text-slate-500">
+            ${formatDate(event.event_date)}
+          </div>
+
+          <div class="lg:col-span-2 text-xs text-slate-500">
+            ${getEventRsvpCount(event.id)} RSVPs
+          </div>
+
+          <div class="lg:col-span-2 flex justify-end gap-2">
+            <a href="/events/event_details?id=${event.id}" class="w-9 h-9 rounded-full bg-white flex items-center justify-center hover:bg-brand-black hover:text-white transition-all" title="View event">
+              <span>↗</span>
+            </a>
+
+            <button data-event-id="${event.id}" class="delete-event-btn w-9 h-9 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all" title="Delete event">
+              ×
+            </button>
+          </div>
+        </div>
+      `).join("");
+
+      attachDeleteEventListeners();
+    }
+
+    function renderUsersTable() {
+      const searchTerm = adminSearch.value.trim().toLowerCase();
+
+      const filteredProfiles = profiles.filter((profile) => {
+        return [
+          profile.full_name ?? "",
+          profile.email ?? "",
+          profile.programme ?? "",
+          profile.campus ?? "",
+          profile.role ?? "",
+        ].join(" ").toLowerCase().includes(searchTerm);
+      });
+
+      if (filteredProfiles.length === 0) {
+        usersTable.innerHTML = `<p class="text-xs text-slate-400">No users found.</p>`;
+        return;
+      }
+
+      usersTable.innerHTML = filteredProfiles.map((profile) => `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center bg-brand-offwhite rounded-[2rem] p-6 border border-black/5">
+          <div class="lg:col-span-4">
+            <p class="font-bold text-brand-black">${escapeHtml(profile.full_name ?? "HSLU Student")}</p>
+            <p class="text-[11px] text-slate-400 mt-1">${escapeHtml(profile.email ?? "No email")}</p>
+          </div>
+
+          <div class="lg:col-span-3 text-xs text-slate-500">
+            ${escapeHtml(profile.programme ?? "Programme not added")}
+          </div>
+
+          <div class="lg:col-span-2 text-xs text-slate-500">
+            ${escapeHtml(profile.campus ?? "Campus not added")}
+          </div>
+
+          <div class="lg:col-span-3 flex justify-end">
+            <span class="text-[9px] uppercase tracking-widest font-black px-4 py-2 rounded-full ${profile.role === "admin" ? "bg-brand-black text-white" : "bg-white text-brand-black"}">
+              ${escapeHtml(profile.role ?? "student")}
+            </span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderDashboard() {
+      renderOverview();
+      renderEventsTable();
+      renderUsersTable();
+    }
+
+    function attachDeleteEventListeners() {
+      document.querySelectorAll<HTMLButtonElement>(".delete-event-btn").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const eventId = button.dataset.eventId;
+          if (!eventId) return;
+
+          const confirmed = confirm("Are you sure you want to delete this event?");
+          if (!confirmed) return;
+
+          const { error } = await supabase
+            .from("events")
+            .delete()
+            .eq("id", eventId);
+
+          if (error) {
+            adminStatus.textContent = error.message;
+            adminStatus.classList.add("text-red-500");
+            return;
+          }
+
+          await loadAdminDashboard();
+        });
+      });
+    }
+
+    async function checkAdminAccess() {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData.session?.user;
+
+      if (!user) {
+        window.location.href = "/auth/login";
+        return false;
+      }
+
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("full_name, role")
+        .eq("id", user.id)
+        .single();
+
+      if (error || profile?.role !== "admin") {
+        window.location.href = "/profile";
+        return false;
+      }
+
+      adminWelcome.textContent = `Welcome back, ${profile.full_name ?? "Admin"}.`;
+      return true;
+    }
+
+    async function loadAdminDashboard() {
+      adminStatus.textContent = "Loading dashboard...";
+      adminStatus.classList.remove("text-red-500");
+
+      const [profilesResult, eventsResult, rsvpsResult] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id, full_name, email, programme, campus, role")
+          .order("full_name", { ascending: true }),
+
+        supabase
+          .from("events")
+          .select("id, title, event_type, category, event_date, event_time, location, participant_limit, created_by")
+          .order("event_date", { ascending: true }),
+
+        supabase
+          .from("event_rsvps")
+          .select("event_id, user_id, status"),
+      ]);
+
+      if (profilesResult.error) {
+        adminStatus.textContent = profilesResult.error.message;
+        adminStatus.classList.add("text-red-500");
+        return;
+      }
+
+      if (eventsResult.error) {
+        adminStatus.textContent = eventsResult.error.message;
+        adminStatus.classList.add("text-red-500");
+        return;
+      }
+
+      if (rsvpsResult.error) {
+        adminStatus.textContent = rsvpsResult.error.message;
+        adminStatus.classList.add("text-red-500");
+        return;
+      }
+
+      profiles = profilesResult.data ?? [];
+      events = eventsResult.data ?? [];
+      rsvps = rsvpsResult.data ?? [];
+
+      adminStatus.textContent = "";
+      renderDashboard();
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        switchSection(tab.dataset.section ?? "overview");
+      });
+    });
+
+    adminSearch.addEventListener("input", () => {
+      renderEventsTable();
+      renderUsersTable();
+    });
+
+    async function initAdmin() {
+      const isAdmin = await checkAdminAccess();
+      if (!isAdmin) return;
+
+      await loadAdminDashboard();
+    }
+
+    initAdmin();
+  </script>
 </Layout>
