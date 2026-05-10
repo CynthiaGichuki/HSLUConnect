@@ -1,11 +1,6 @@
 ---
-// src/layouts/Layout.astro
 import "../styles/global.css";
-import {
-  Youtube,
-  Instagram,
-  Twitter,
-} from "lucide-astro";
+import { Youtube, Instagram, Twitter, User, LogOut, ChevronDown } from "lucide-astro";
 
 const { title } = Astro.props;
 ---
@@ -25,7 +20,7 @@ const { title } = Astro.props;
           <div class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center font-black text-brand-black group-hover:rotate-12 transition-transform">
             H
           </div>
-          <span class="text-xl font-black tracking-tighter text-white">HSLUConnect</span>
+          <span class="text-xl font-black tracking-tighter text-white uppercase">HSLUConnect</span>
         </a>
 
         <div class="hidden lg:flex items-center bg-white/90 backdrop-blur-md px-10 py-3 rounded-full shadow-xl border border-white/20 gap-8 mx-4">
@@ -36,88 +31,81 @@ const { title } = Astro.props;
         </div>
 
         <div class="flex items-center gap-6">
-          <div class="hidden md:flex items-center gap-3">
-            <a href="https://instagram.com" class="group">
-              <div class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-brand-black group-hover:rotate-12 transition-transform shadow-lg">
+          <div class="hidden xl:flex items-center gap-3">
+             <a href="#" class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-brand-black hover:rotate-12 transition-transform shadow-lg">
                 <Instagram size={18} strokeWidth={1.5} />
-              </div>
-            </a>
-
-            <a href="https://youtube.com" class="group">
-              <div class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-brand-black group-hover:rotate-12 transition-transform shadow-lg">
+             </a>
+             <a href="#" class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-brand-black hover:rotate-12 transition-transform shadow-lg">
                 <Youtube size={18} strokeWidth={1.5} />
-              </div>
-            </a>
-
-            <a href="https://twitter.com" class="group">
-              <div class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-brand-black group-hover:rotate-12 transition-transform shadow-lg">
+             </a>
+             <a href="#" class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-brand-black hover:rotate-12 transition-transform shadow-lg">
                 <Twitter size={18} strokeWidth={1.5} />
-              </div>
-            </a>
+             </a>
           </div>
 
-          <a 
-            id="login-link"
-            href="/auth/login" 
-            class="bg-brand-primary text-brand-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-brand-white transition-all shadow-lg flex items-center gap-2 whitespace-nowrap"
-          >
-            Login
-          </a>
+          <div class="relative flex items-center gap-3">
+            <div id="logged-out-group" class="flex gap-3">
+              <a href="/auth/login" class="bg-brand-primary text-brand-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-brand-white transition-all">Login</a>
+              <a href="/auth/register" class="bg-brand-black text-white px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-brand-primary hover:text-brand-black transition-all">Register</a>
+            </div>
 
-          <a 
-            id="register-link"
-            href="/auth/register" 
-            class="bg-brand-primary text-brand-black px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-brand-white transition-all shadow-lg flex items-center gap-2 whitespace-nowrap"
-          >
-            Register
-          </a>
+            <div id="user-menu" class="hidden relative group">
+              <button class="flex items-center gap-3 bg-white/90 backdrop-blur-md border border-white/20 pl-2 pr-6 py-2 rounded-full shadow-lg group-hover:border-brand-primary transition-all">
+                <div class="w-8 h-8 bg-brand-primary rounded-full flex items-center justify-center text-brand-black">
+                  <User size={16} />
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-widest">My Account</span>
+                <ChevronDown size={12} class="group-hover:rotate-180 transition-transform" />
+              </button>
 
-          <button
-            id="logout-button"
-            class="hidden bg-brand-black text-brand-white px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-brand-primary hover:text-brand-black transition-all shadow-lg whitespace-nowrap"
-          >
-            Logout
-          </button>
+              <div class="absolute right-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                <div class="bg-white rounded-[1.5rem] shadow-2xl border border-black/5 overflow-hidden w-48 p-2">
+                  <a href="/profile" class="flex items-center gap-3 px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-offwhite rounded-xl transition-colors">
+                    <User size={14} class="text-brand-primary" /> Profile
+                  </a>
+                  <button id="logout-btn" class="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-red-400 hover:bg-red-50 rounded-xl transition-colors">
+                    <LogOut size={14} /> Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-
       </div>
     </nav>
 
-    <main>
-      <slot />
-    </main>
-
-    <footer class="text-center py-20 text-slate-400 text-[10px] font-black tracking-[0.3em] uppercase">
-      &copy; 2026 MAITPRO Team A
-    </footer>
+    <main><slot /></main>
 
     <script>
       import { supabase } from "../lib/supabase";
 
-      const loginLink = document.getElementById("login-link") as HTMLAnchorElement;
-      const registerLink = document.getElementById("register-link") as HTMLAnchorElement;
-      const logoutButton = document.getElementById("logout-button") as HTMLButtonElement;
-      const hostLink = document.getElementById("host-link") as HTMLAnchorElement;
+      const loggedOutGroup = document.getElementById("logged-out-group");
+      const userMenu = document.getElementById("user-menu");
+      const logoutBtn = document.getElementById("logout-btn");
+      const hostLink = document.getElementById("host-link");
 
       async function updateNavbar() {
-        const { data } = await supabase.auth.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
 
-        if (data.session) {
-          loginLink.classList.add("hidden");
-          registerLink.classList.add("hidden");
-          logoutButton.classList.remove("hidden");
-          hostLink.classList.remove("hidden");
+        if (session) {
+          loggedOutGroup?.classList.add("hidden");
+          userMenu?.classList.remove("hidden");
+          hostLink?.classList.remove("hidden");
         } else {
-          loginLink.classList.remove("hidden");
-          registerLink.classList.remove("hidden");
-          logoutButton.classList.add("hidden");
-          hostLink.classList.add("hidden");
+          loggedOutGroup?.classList.remove("hidden");
+          userMenu?.classList.add("hidden");
+          hostLink?.classList.add("hidden");
         }
       }
 
-      logoutButton?.addEventListener("click", async () => {
+      logoutBtn?.addEventListener("click", async () => {
         await supabase.auth.signOut();
-        window.location.href = "/auth/login";
+        window.location.href = "/";
+      });
+
+      // Handle session changes in real-time
+      supabase.auth.onAuthStateChange((_event, session) => {
+        updateNavbar();
       });
 
       updateNavbar();
