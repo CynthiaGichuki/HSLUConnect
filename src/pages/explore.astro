@@ -80,6 +80,15 @@ import { Filter, Search } from 'lucide-astro';
     let goingEventIds = new Set<string>();
     let attendeeCounts = new Map<string, number>();
 
+    function escapeHtml(value: string) {
+      return value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
     function formatEventType(type: string) {
       return type.charAt(0).toUpperCase() + type.slice(1);
     }
@@ -99,8 +108,8 @@ import { Filter, Search } from 'lucide-astro';
 
     function eventCard(event: EventItem) {
       const formattedType = formatEventType(event.event_type);
-      const isGoing = goingEventIds.has(event.id);
       const attendeeCount = attendeeCounts.get(event.id) ?? 0;
+      const isGoing = goingEventIds.has(event.id);
 
       const spotsText = event.participant_limit
         ? `${attendeeCount} / ${event.participant_limit} spots filled`
@@ -108,59 +117,70 @@ import { Filter, Search } from 'lucide-astro';
 
       const typeClasses = event.event_type === "official"
         ? "bg-brand-black text-brand-white"
-        : "bg-brand-primary text-brand-black";
+        : event.event_type === "private"
+          ? "bg-brand-offwhite text-brand-black border border-black/5"
+          : "bg-brand-primary text-brand-black";
 
-      const buttonClasses = isGoing
-        ? "bg-brand-black text-brand-white"
-        : "bg-brand-offwhite text-brand-black hover:bg-brand-black hover:text-brand-white";
-
-      const buttonText = !currentUserId
-        ? "Login to Join"
-        : isGoing
-          ? "Going ✓"
-          : "Join Event";
+      const goingBadge = isGoing
+        ? `<span class="text-[9px] font-black uppercase tracking-widest text-brand-primary">You’re going</span>`
+        : "";
 
       return `
-        <div class="group bg-white rounded-[3rem] border border-black/5 p-10 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-700 flex flex-col min-h-[500px]">
-          <div class="flex justify-between items-start mb-10">
-            <span class="text-[9px] uppercase tracking-[0.2em] font-black px-4 py-2 rounded-full ${typeClasses}">
-              ${formattedType}
-            </span>
-            <span class="text-[9px] font-black uppercase tracking-widest text-black/20 group-hover:text-brand-primary transition-colors italic">
-              ${event.category ?? "General"}
-            </span>
-          </div>
+        <a
+          href="/events/event_details?id=${event.id}"
+          class="group block bg-white rounded-[3rem] border border-black/5 p-10 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-700 min-h-[500px]"
+        >
+          <div class="flex flex-col h-full">
+            <div class="flex justify-between items-start mb-10">
+              <span class="text-[9px] uppercase tracking-[0.2em] font-black px-4 py-2 rounded-full ${typeClasses}">
+                ${formattedType}
+              </span>
 
-          <div class="flex-grow">
-            <h3 class="text-3xl font-light text-brand-black leading-tight mb-8 group-hover:text-brand-primary transition-colors uppercase tracking-tighter italic">
-              ${event.title}
-            </h3>
-            
-            ${event.description ? `<p class="text-slate-500 font-light text-sm leading-relaxed mb-8">${event.description}</p>` : ""}
-
-            <div class="space-y-5">
-              <div class="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
-                ${event.location ?? "Location TBC"}
-              </div>
-
-              <div class="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
-                ${formatDate(event.event_date)}${formatTime(event.event_time)}
-              </div>
-
-              <div class="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
-                ${spotsText}
+              <div class="text-right space-y-2">
+                <span class="block text-[9px] font-black uppercase tracking-widest text-black/20 group-hover:text-brand-primary transition-colors italic">
+                  ${escapeHtml(event.category ?? "General")}
+                </span>
+                ${goingBadge}
               </div>
             </div>
-          </div>
 
-          <button 
-            data-event-id="${event.id}"
-            class="rsvp-button mt-12 w-full group/btn flex items-center justify-between py-5 px-8 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] transition-all shadow-sm ${buttonClasses}"
-          >
-            ${buttonText}
-            <span class="group-hover/btn:translate-x-2 transition-transform">→</span>
-          </button>
-        </div>
+            <div class="flex-grow">
+              <h3 class="text-3xl font-light text-brand-black leading-tight mb-8 group-hover:text-brand-primary transition-colors uppercase tracking-tighter italic">
+                ${escapeHtml(event.title)}
+              </h3>
+              
+              ${
+                event.description
+                  ? `<p class="text-slate-500 font-light text-sm leading-relaxed mb-8">${escapeHtml(event.description)}</p>`
+                  : ""
+              }
+
+              <div class="space-y-5">
+                <div class="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
+                  ${escapeHtml(event.location ?? "Location TBC")}
+                </div>
+
+                <div class="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
+                  ${formatDate(event.event_date)}${formatTime(event.event_time)}
+                </div>
+
+                <div class="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
+                  ${spotsText}
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-12 flex items-center justify-between py-5 px-8 rounded-2xl bg-brand-offwhite group-hover:bg-brand-black transition-all">
+              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-brand-black group-hover:text-white transition-colors">
+                View Event
+              </span>
+
+              <span class="text-brand-black group-hover:text-white group-hover:translate-x-2 transition-all">
+                →
+              </span>
+            </div>
+          </div>
+        </a>
       `;
     }
 
@@ -172,70 +192,6 @@ import { Filter, Search } from 'lucide-astro';
         button.classList.toggle("text-brand-white", isActive);
         button.classList.toggle("bg-brand-offwhite", !isActive);
         button.classList.toggle("text-brand-black", !isActive);
-      });
-    }
-
-    function attachRSVPListeners() {
-      document.querySelectorAll<HTMLButtonElement>(".rsvp-button").forEach((button) => {
-        button.addEventListener("click", async () => {
-          const eventId = button.dataset.eventId;
-
-          if (!eventId) return;
-
-          if (!currentUserId) {
-            status.textContent = "Please log in to RSVP for an event.";
-            status.classList.remove("text-slate-400");
-            status.classList.add("text-red-500");
-
-            setTimeout(() => {
-              window.location.href = "/auth/login";
-            }, 1200);
-
-            return;
-          }
-
-          button.disabled = true;
-          button.textContent = "Updating...";
-
-          const isGoing = goingEventIds.has(eventId);
-
-          if (isGoing) {
-            const { error } = await supabase
-              .from("event_rsvps")
-              .update({ status: "cancelled" })
-              .eq("event_id", eventId)
-              .eq("user_id", currentUserId);
-
-            if (error) {
-              status.textContent = error.message;
-              button.disabled = false;
-              renderEvents();
-              return;
-            }
-          } else {
-            const { error } = await supabase
-              .from("event_rsvps")
-              .upsert(
-                {
-                  event_id: eventId,
-                  user_id: currentUserId,
-                  status: "going",
-                },
-                {
-                  onConflict: "event_id,user_id",
-                }
-              );
-
-            if (error) {
-              status.textContent = error.message;
-              button.disabled = false;
-              renderEvents();
-              return;
-            }
-          }
-
-          await loadEvents();
-        });
       });
     }
 
@@ -268,7 +224,6 @@ import { Filter, Search } from 'lucide-astro';
 
       status.textContent = "";
       grid.innerHTML = filteredEvents.map(eventCard).join("");
-      attachRSVPListeners();
     }
 
     async function loadSession() {
@@ -302,6 +257,7 @@ import { Filter, Search } from 'lucide-astro';
       const rsvps = (rsvpData ?? []) as RSVPItem[];
 
       events = eventsData ?? [];
+
       goingEventIds = new Set(
         rsvps
           .filter((rsvp) => rsvp.user_id === currentUserId)
