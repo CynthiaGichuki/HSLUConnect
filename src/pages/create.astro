@@ -176,7 +176,7 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
     const submitText = document.getElementById("submit-text") as HTMLSpanElement;
     const officialOption = document.getElementById("official-option") as HTMLOptionElement;
     const eventTypeHelp = document.getElementById("event-type-help") as HTMLParagraphElement;
-    
+
     const today = new Date().toISOString().split("T")[0];
     eventDateInput.min = today;
 
@@ -292,6 +292,16 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
         return;
       }
 
+      const privateToken =
+        event_type === "private"
+          ? crypto.randomUUID()
+          : null;
+
+      const approvalStatus =
+        role === "admin"
+          ? "approved"
+          : "pending";
+
       const { error } = await supabase.from("events").insert({
         title,
         description: description || null,
@@ -302,6 +312,10 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
         event_time: event_time || null,
         participant_limit,
         created_by: user.id,
+        approval_status: approvalStatus,
+        approved_by: role === "admin" ? user.id : null,
+        approved_at: role === "admin" ? new Date().toISOString() : null,
+        private_token: privateToken,
       });
 
       submitButton.disabled = false;
@@ -313,7 +327,9 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
       }
 
       showMessage(
-        "Event published successfully. You can now see it on the Explore page.",
+        role === "admin"
+          ? "Event published successfully."
+          : "Event submitted successfully. It will go live after admin approval.",
         "success"
       );
 

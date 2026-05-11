@@ -66,7 +66,7 @@ import { Filter, Search } from 'lucide-astro';
     type RSVPItem = {
       event_id: string;
       user_id: string;
-      status: "going" | "cancelled";
+      status: "pending" | "approved" | "rejected" | "cancelled";
     };
 
     const grid = document.getElementById("events-grid") as HTMLDivElement;
@@ -237,6 +237,8 @@ import { Filter, Search } from 'lucide-astro';
       const { data: eventsData, error: eventsError } = await supabase
         .from("events")
         .select("id, title, event_type, category, event_date, event_time, location, participant_limit, description")
+        .eq("approval_status", "approved")
+        .neq("event_type", "private")
         .order("event_date", { ascending: true });
 
       if (eventsError) {
@@ -247,7 +249,7 @@ import { Filter, Search } from 'lucide-astro';
       const { data: rsvpData, error: rsvpError } = await supabase
         .from("event_rsvps")
         .select("event_id, user_id, status")
-        .eq("status", "going");
+        .eq("status", "approved");
 
       if (rsvpError) {
         status.textContent = rsvpError.message;

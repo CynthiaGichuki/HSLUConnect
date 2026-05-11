@@ -165,6 +165,7 @@ import {
       location: string | null;
       participant_limit: number | null;
       created_by: string;
+      approval_status: "pending" | "approved" | "rejected";
     };
 
     type RSVPItem = {
@@ -298,7 +299,21 @@ import {
             ${getEventRsvpCount(event.id)} RSVPs
           </div>
 
-          <div class="lg:col-span-2 flex justify-end gap-2">
+          <div class="lg:col-span-2 flex justify-end gap-2 flex-wrap">
+            ${event.approval_status === "pending" ? `
+              <button data-event-id="${event.id}" class="approve-event-btn px-3 py-2 rounded-full bg-green-50 text-green-600 text-[9px] font-black uppercase">
+                Approve
+              </button>
+
+              <button data-event-id="${event.id}" class="reject-event-btn px-3 py-2 rounded-full bg-red-50 text-red-500 text-[9px] font-black uppercase">
+                Reject
+              </button>
+            ` : `
+              <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 px-3 py-2">
+                ${event.approval_status}
+              </span>
+            `}
+
             <a href="/events/event_details?id=${event.id}" class="w-9 h-9 rounded-full bg-white flex items-center justify-center hover:bg-brand-black hover:text-white transition-all" title="View event">
               <span>↗</span>
             </a>
@@ -311,6 +326,62 @@ import {
       `).join("");
 
       attachDeleteEventListeners();
+      attachApprovalListeners();
+    }
+
+    function attachApprovalListeners() {
+      document.querySelectorAll<HTMLButtonElement>(".approve-event-btn").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const eventId = button.dataset.eventId;
+          if (!eventId) return;
+
+          const { data: sessionData } = await supabase.auth.getSession();
+          const adminId = sessionData.session?.user.id;
+
+          const { error } = await supabase
+            .from("events")
+            .update({
+              approval_status: "approved",
+              approved_by: adminId,
+              approved_at: new Date().toISOString(),
+              rejected_reason: null,
+            })
+            .eq("id", eventId);
+
+          if (error) {
+            adminStatus.textContent = error.message;
+            adminStatus.classList.add("text-red-500");
+            return;
+          }
+
+          await loadAdminDashboard();
+        });
+      });
+
+      document.querySelectorAll<HTMLButtonElement>(".reject-event-btn").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const eventId = button.dataset.eventId;
+          if (!eventId) return;
+
+          const reason = prompt("Why is this event being rejected?") || "Rejected by admin.";
+
+          const { error } = await supabase
+            .from("events")
+            .update({
+              approval_status: "rejected",
+              rejected_reason: reason,
+            })
+            .eq("id", eventId);
+
+          if (error) {
+            adminStatus.textContent = error.message;
+            adminStatus.classList.add("text-red-500");
+            return;
+          }
+
+          await loadAdminDashboard();
+        });
+      });
     }
 
     function renderUsersTable() {
@@ -347,12 +418,46 @@ import {
           </div>
 
           <div class="lg:col-span-3 flex justify-end">
-            <span class="text-[9px] uppercase tracking-widest font-black px-4 py-2 rounded-full ${profile.role === "admin" ? "bg-brand-black text-white" : "bg-white text-brand-black"}">
+            <button
+              data-user-id="${profile.id}"
+              data-current-role="${profile.role ?? "student"}"
+              class="toggle-role-btn text-[9px] uppercase tracking-widest font-black px-4 py-2 rounded-full ${profile.role === "admin" ? "bg-brand-black text-white" : "bg-white text-brand-black"}"
+            >
               ${escapeHtml(profile.role ?? "student")}
-            </span>
+            </button>
           </div>
         </div>
       `).join("");
+      attachRoleToggleListeners();
+    }
+
+
+    function attachRoleToggleListeners() {
+      document.querySelectorAll<HTMLButtonElement>(".toggle-role-btn").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const userId = button.dataset.userId;
+          const currentRole = button.dataset.currentRole;
+          if (!userId) return;
+
+          const newRole = currentRole === "admin" ? "student" : "admin";
+
+          const confirmed = confirm(`Change this user to ${newRole}?`);
+          if (!confirmed) return;
+
+          const { error } = await supabase
+            .from("profiles")
+            .update({ role: newRole })
+            .eq("id", userId);
+
+          if (error) {
+            adminStatus.textContent = error.message;
+            adminStatus.classList.add("text-red-500");
+            return;
+          }
+
+          await loadAdminDashboard();
+        });
+      });
     }
 
     function renderDashboard() {
@@ -422,7 +527,7 @@ import {
 
         supabase
           .from("events")
-          .select("id, title, event_type, category, event_date, event_time, location, participant_limit, created_by")
+          .select("id, title, event_type, category, event_date, event_time, location, participant_limit, created_by, approval_status")
           .order("event_date", { ascending: true }),
 
         supabase
@@ -477,5 +582,3 @@ import {
     initAdmin();
   </script>
 </Layout>
-
-<!-- change colour of HSLU connect for other pages except Home -->
