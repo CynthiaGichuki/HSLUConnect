@@ -1,17 +1,50 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap, User, MapPin, BookOpen } from 'lucide-astro';
+import Layout from "../../layouts/Layout.astro";
+import {
+  ShieldCheck,
+  ArrowRight,
+  Mail,
+  Lock,
+  GraduationCap,
+  User,
+  MapPin,
+  BookOpen,
+  FileText,
+} from "lucide-astro";
+
+const campusData = {
+  Rotkreuz: [
+    "MSc IT, Digitalisation & Sustainability",
+    "BSc Computer Science",
+    "BSc Artificial Intelligence",
+  ],
+  Luzern: [
+    "MSc Business Administration",
+    "MSc Banking & Finance",
+    "BSc International Business",
+  ],
+  Horw: ["BSc Engineering", "BSc Architecture"],
+};
 ---
 
 <Layout title="Student Access">
-  <div class="bg-white min-h-screen pt-40 pb-24 flex items-center justify-center">
+  <div
+    class="bg-white min-h-screen pt-40 pb-24 flex items-center justify-center"
+  >
     <div class="max-w-xl w-full px-8">
-      
       <header class="text-center mb-12">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-brand-primary/10 rounded-full mb-6">
-          <GraduationCap size={32} class="text-brand-primary" strokeWidth={1.5} />
+        <div
+          class="inline-flex items-center justify-center w-16 h-16 bg-brand-primary/10 rounded-full mb-6"
+        >
+          <GraduationCap
+            size={32}
+            class="text-brand-primary"
+            strokeWidth={1.5}
+          />
         </div>
-        <h1 class="text-4xl font-light text-brand-black tracking-tighter italic mb-3">
+        <h1
+          class="text-4xl font-light text-brand-black tracking-tighter italic mb-3"
+        >
           Join <span class="font-semibold text-brand-primary">HSLUConnect</span>
         </h1>
         <p class="text-slate-400 font-light text-sm">
@@ -19,16 +52,22 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap, User, MapPin, BookO
         </p>
       </header>
 
-      <div class="bg-white border border-black/5 rounded-[3rem] p-10 md:p-14 shadow-2xl shadow-black/[0.03]">
+      <div
+        class="bg-white border border-black/5 rounded-[3rem] p-10 md:p-14 shadow-2xl shadow-black/[0.03]"
+      >
         <form id="register-form" class="space-y-6">
-
           <div class="space-y-2">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
+            <label
+              class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic"
+            >
               Full Name
             </label>
             <div class="relative group">
-              <User size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
-              <input 
+              <User
+                size={18}
+                class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors"
+              />
+              <input
                 id="full_name"
                 type="text"
                 placeholder="Your full name"
@@ -37,16 +76,21 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap, User, MapPin, BookO
               />
             </div>
           </div>
-          
+
           <div class="space-y-2">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
+            <label
+              class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic"
+            >
               HSLU Email Address
             </label>
             <div class="relative group">
-              <Mail size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
-              <input 
+              <Mail
+                size={18}
+                class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors"
+              />
+              <input
                 id="email"
-                type="email" 
+                type="email"
                 placeholder="firstname.lastname@stud.hslu.ch"
                 class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
                 required
@@ -55,37 +99,30 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap, User, MapPin, BookO
           </div>
 
           <div class="space-y-2">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
-              Programme
-            </label>
-            <div class="relative group">
-              <BookOpen size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
-              <input 
-                id="programme"
-                type="text"
-                placeholder="e.g. MSc IT, Digitalisation and Sustainability"
-                class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
-              />
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
-              Campus
-            </label>
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">Campus</label>
             <div class="relative group">
               <MapPin size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
-              <input 
-                id="campus"
-                type="text"
-                placeholder="e.g. Rotkreuz"
-                class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
-              />
+              <select id="campus" class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all appearance-none cursor-pointer">
+                <option value="" disabled selected>Select your campus</option>
+                {Object.keys(campusData).map(campus => <option value={campus}>{campus}</option>)}
+              </select>
             </div>
           </div>
 
           <div class="space-y-2">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">Programme</label>
+            <div class="relative group">
+              <BookOpen size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
+              <select id="programme" disabled class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all appearance-none cursor-pointer disabled:opacity-50">
+                <option value="">Choose campus first</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label
+              class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic"
+            >
               Bio
             </label>
             <textarea
@@ -97,14 +134,19 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap, User, MapPin, BookO
           </div>
 
           <div class="space-y-2">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">
+            <label
+              class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic"
+            >
               Create Password
             </label>
             <div class="relative group">
-              <Lock size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
-              <input 
+              <Lock
+                size={18}
+                class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors"
+              />
+              <input
                 id="password"
-                type="password" 
+                type="password"
                 placeholder="••••••••"
                 class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all"
                 required
@@ -112,33 +154,52 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap, User, MapPin, BookO
             </div>
 
             <p class="text-[10px] text-slate-400 ml-1">
-              Must contain 8+ characters, uppercase, lowercase, number, and symbol.
+              Must contain 8+ characters, uppercase, lowercase, number, and
+              symbol.
             </p>
+          </div>
+
+          <div class="p-5 bg-brand-offwhite rounded-2xl border border-black/5 space-y-4">
+            <div class="flex items-start gap-3">
+              <input type="checkbox" id="terms-check" class="mt-1 w-4 h-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary cursor-pointer" required />
+              <label for="terms-check" class="text-[10px] text-slate-500 leading-relaxed font-medium">
+                I agree to the <a href="terms" class="text-brand-black underline">Terms of Service</a> and <a href="privacy" class="text-brand-black underline">Privacy Policy</a>. I understand that HSLUConnect acts as a directory only and holds <strong>no liability</strong> for incidents occurring during peer-led events.
+              </label>
+            </div>
           </div>
 
           <p id="message" class="hidden text-xs font-medium text-center"></p>
 
-          <div class="flex items-start gap-3 p-4 bg-brand-primary/5 rounded-2xl">
+          <div
+            class="flex items-start gap-3 p-4 bg-brand-primary/5 rounded-2xl"
+          >
             <ShieldCheck size={16} class="text-brand-primary shrink-0 mt-0.5" />
             <p class="text-[10px] leading-relaxed text-slate-500 font-medium">
-              By clicking register, you verify that you are a current HSLU student. We will send a confirmation link to your student email.
+              By clicking register, you verify that you are a current HSLU
+              student. We will send a confirmation link to your student email.
             </p>
           </div>
 
-          <button 
+          <button
             id="submit-button"
-            type="submit" 
+            type="submit"
             class="group w-full py-5 bg-brand-black text-brand-white rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-brand-primary hover:text-brand-black transition-all shadow-xl shadow-black/10 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <span id="submit-text">Create My Account</span>
-            <ArrowRight size={16} class="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight
+              size={16}
+              class="group-hover:translate-x-1 transition-transform"
+            />
           </button>
         </form>
 
         <div class="mt-10 text-center">
           <p class="text-xs text-slate-400 font-light">
-            Already have an account? 
-            <a href="/auth/login" class="text-brand-black font-bold hover:text-brand-primary underline underline-offset-4 decoration-brand-primary/30 transition-colors ml-1">
+            Already have an account?
+            <a
+              href="/auth/login"
+              class="text-brand-black font-bold hover:text-brand-primary underline underline-offset-4 decoration-brand-primary/30 transition-colors ml-1"
+            >
               Sign In
             </a>
           </p>
@@ -150,21 +211,51 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap, User, MapPin, BookO
   <script>
     import { supabase } from "../../lib/supabase";
 
+    const campusMap = {
+        "Rotkreuz": ["MSc IT, Digitalisation & Sustainability", "BSc Computer Science", "BSc Artificial Intelligence"],
+        "Luzern": ["MSc Business Administration", "MSc Banking & Finance", "BSc International Business"],
+        "Horw": ["BSc Engineering", "BSc Architecture"]
+    };
+
     const form = document.getElementById("register-form") as HTMLFormElement;
-    const fullNameInput = document.getElementById("full_name") as HTMLInputElement;
+    const campusSelect = document.getElementById("campus") as HTMLSelectElement;
+    const programmeSelect = document.getElementById("programme") as HTMLSelectElement;
+    const fullNameInput = document.getElementById(
+      "full_name",
+    ) as HTMLInputElement;
     const emailInput = document.getElementById("email") as HTMLInputElement;
-    const programmeInput = document.getElementById("programme") as HTMLInputElement;
-    const campusInput = document.getElementById("campus") as HTMLInputElement;
     const bioInput = document.getElementById("bio") as HTMLTextAreaElement;
-    const passwordInput = document.getElementById("password") as HTMLInputElement;
+    const passwordInput = document.getElementById(
+      "password",
+    ) as HTMLInputElement;
     const message = document.getElementById("message") as HTMLParagraphElement;
-    const submitButton = document.getElementById("submit-button") as HTMLButtonElement;
-    const submitText = document.getElementById("submit-text") as HTMLSpanElement;
+    const submitButton = document.getElementById(
+      "submit-button",
+    ) as HTMLButtonElement;
+    const submitText = document.getElementById(
+      "submit-text",
+    ) as HTMLSpanElement;
+
+    campusSelect.addEventListener('change', (e) => {
+        const campus = (e.target as HTMLSelectElement).value;
+        const programmes = campusMap[campus as keyof typeof campusMap];
+        
+        programmeSelect.disabled = false;
+        programmeSelect.innerHTML = '<option value="" disabled selected>Select your programme</option>';
+        programmes.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p;
+            opt.textContent = p;
+            programmeSelect.appendChild(opt);
+        });
+    });
 
     function showMessage(text: string, type: "error" | "success") {
       message.textContent = text;
       message.classList.remove("hidden", "text-red-500", "text-green-600");
-      message.classList.add(type === "error" ? "text-red-500" : "text-green-600");
+      message.classList.add(
+        type === "error" ? "text-red-500" : "text-green-600",
+      );
     }
 
     form.addEventListener("submit", async (event) => {
@@ -172,10 +263,16 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap, User, MapPin, BookO
 
       const fullName = fullNameInput.value.trim();
       const email = emailInput.value.trim().toLowerCase();
-      const programme = programmeInput.value.trim();
-      const campus = campusInput.value.trim();
+      const campus = campusSelect.value.trim();
+      const programme = programmeSelect.value.trim();
       const bio = bioInput.value.trim();
       const password = passwordInput.value;
+      const termsAccepted = (document.getElementById("terms-check") as HTMLInputElement).checked;
+
+      if (!termsAccepted) {
+          showMessage("You must accept the terms to register.", "error");
+          return;
+      }
 
       if (!fullName) {
         showMessage("Please enter your full name.", "error");
@@ -183,7 +280,10 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap, User, MapPin, BookO
       }
 
       if (!email.endsWith("@stud.hslu.ch")) {
-        showMessage("Please use your HSLU student email ending in @stud.hslu.ch.", "error");
+        showMessage(
+          "Please use your HSLU student email ending in @stud.hslu.ch.",
+          "error",
+        );
         return;
       }
 
@@ -193,7 +293,7 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap, User, MapPin, BookO
       if (!passwordRegex.test(password)) {
         showMessage(
           "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol.",
-          "error"
+          "error",
         );
         return;
       }
@@ -215,49 +315,47 @@ import { ShieldCheck, ArrowRight, Mail, Lock, GraduationCap, User, MapPin, BookO
         },
       });
 
-if (error) {
-  submitButton.disabled = false;
-  submitText.textContent = "Create My Account";
-  showMessage(error.message, "error");
-  return;
-}
-
-const {
-  data: { user },
-} = await supabase.auth.getUser();
-
-if (user) {
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .upsert(
-      {
-        id: user.id,
-        full_name: fullName,
-        email: email,
-        programme: programme || null,
-        campus: campus || null,
-        bio: bio || null,
-        role: "student",
-      },
-      {
-        onConflict: "id",
+      if (error) {
+        submitButton.disabled = false;
+        submitText.textContent = "Create My Account";
+        showMessage(error.message, "error");
+        return;
       }
-    );
 
-    if (profileError) {
-      submitButton.disabled = false;
-      submitText.textContent = "Create My Account";
-      showMessage(profileError.message, "error");
-      return;
-    }
-  }
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        const { error: profileError } = await supabase.from("profiles").upsert(
+          {
+            id: user.id,
+            full_name: fullName,
+            email: email,
+            programme: programme || null,
+            campus: campus || null,
+            bio: bio || null,
+            role: "student",
+          },
+          {
+            onConflict: "id",
+          },
+        );
+
+        if (profileError) {
+          submitButton.disabled = false;
+          submitText.textContent = "Create My Account";
+          showMessage(profileError.message, "error");
+          return;
+        }
+      }
 
       submitButton.disabled = false;
       submitText.textContent = "Create My Account";
 
       showMessage(
         "Account created. Please check your HSLU email to confirm your account.",
-        "success"
+        "success",
       );
 
       form.reset();
