@@ -176,6 +176,9 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
     const submitText = document.getElementById("submit-text") as HTMLSpanElement;
     const officialOption = document.getElementById("official-option") as HTMLOptionElement;
     const eventTypeHelp = document.getElementById("event-type-help") as HTMLParagraphElement;
+    
+    const today = new Date().toISOString().split("T")[0];
+    eventDateInput.min = today;
 
     let currentUserRole: string | null = null;
 
@@ -256,6 +259,11 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
 
       if (!title || !event_date || !location) {
         showMessage("Please complete all required fields.", "error");
+        return;
+      }
+
+      if (event_date < today) {
+        showMessage("Please choose today or a future date for the event.", "error");
         return;
       }
 
