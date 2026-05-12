@@ -1,61 +1,146 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { ShieldAlert, Scale, UserCheck } from 'lucide-astro';
+import { ShieldAlert, Scale, UserCheck, CirclePlus, FunnelX } from "lucide-astro";
 ---
 
 <Layout title="Terms of Service">
-  <div class="bg-creamy-melt min-h-screen pt-40 pb-24">
-    <div class="max-w-3xl mx-auto px-8">
-      
-      <header class="mb-16">
-        <h1 class="text-5xl font-light text-brand-black tracking-tighter italic mb-4">
-          Terms of <span class="font-semibold text-brand-primary">Service</span>
-        </h1>
-        <p class="text-slate-500 font-light text-lg">Last updated: May 11, 2026</p>
-      </header>
+    <div class="bg-creamy-melt min-h-screen pt-40 pb-24">
+        <div class="max-w-3xl mx-auto px-8">
+            <header class="mb-16">
+                <h1
+                    class="text-5xl font-light text-brand-black tracking-tighter italic mb-4"
+                >
+                    Terms of <span class="font-semibold text-brand-primary"
+                        >Service</span
+                    >
+                </h1>
+                <p class="text-slate-500 font-light text-lg">
+                    Last updated: May 12, 2026
+                </p>
+            </header>
 
-      <div class="bg-white/80 backdrop-blur-xl p-12 rounded-[3rem] shadow-2xl border border-white/40 prose prose-slate max-w-none">
-        
-        <section class="mb-12">
-          <div class="flex items-center gap-3 mb-6 text-brand-primary">
-            <Scale size={24} strokeWidth={1.5} />
-            <h2 class="text-xl font-black uppercase tracking-widest m-0">1. Agreement to Terms</h2>
-          </div>
-          <p class="text-slate-600 leading-relaxed font-light">
-            By using HSLUConnect, you agree to these terms. This platform is a student project created for the MAITPRO module. It acts as a directory to facilitate social interaction and is not an official administrative tool of HSLU.
-          </p>
-        </section>
+            <div
+                class="bg-white/80 backdrop-blur-xl p-12 rounded-[3rem] shadow-2xl border border-white/40 prose prose-slate max-w-none"
+            >
+                <section class="mb-12">
+                    <div
+                        class="flex items-center gap-3 mb-6 text-brand-primary"
+                    >
+                        <Scale size={24} strokeWidth={1.5} />
+                        <h2
+                            class="text-xl font-black uppercase tracking-widest m-0"
+                        >
+                            1. Agreement to Terms
+                        </h2>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed font-light">
+                        Welcome to HSLUConnect. By accessing or using our
+                        platform, you agree to be bound by these Terms of
+                        Service. This platform is a student-led project
+                        developed as part of the MAITPRO module at the Lucerne
+                        University of Applied Sciences and Arts (HSLU).
+                    </p>
+                </section>
 
-        <section class="mb-12">
-          <div class="flex items-center gap-3 mb-6 text-brand-primary">
-            <UserCheck size={24} strokeWidth={1.5} />
-            <h2 class="text-xl font-black uppercase tracking-widest m-0">2. Eligibility</h2>
-          </div>
-          <p class="text-slate-600 leading-relaxed font-light">
-            Access is strictly limited to current HSLU students. You must use your verified <code class="bg-brand-offwhite px-2 py-1 rounded">@stud.hslu.ch</code> email. Any account found using non-student credentials will be terminated immediately.
-          </p>
-        </section>
+                <section class="mb-12">
+                    <div
+                        class="flex items-center gap-3 mb-6 text-brand-primary"
+                    >
+                        <CirclePlus size={24} strokeWidth={1.5} />
+                        <h2
+                            class="text-xl font-black uppercase tracking-widest m-0"
+                        >
+                            2. Scope of Service
+                        </h2>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed font-light">
+                        HSLUConnect acts exclusively as a digital directory and
+                        networking facilitator for students of HSLU. We provide
+                        the infrastructure for students to list, discover, and
+                        RSVP to social and academic events. HSLUConnect does not
+                        organize, host, or supervise the events listed on the
+                        platform.
+                    </p>
+                </section>
 
-        <section class="mb-12 p-8 bg-brand-primary/5 rounded-3xl border border-brand-primary/20">
-          <div class="flex items-center gap-3 mb-4 text-brand-primary">
-            <ShieldAlert size={24} strokeWidth={1.5} />
-            <h2 class="text-xl font-black uppercase tracking-widest m-0">3. Liability Waiver</h2>
-          </div>
-          <p class="text-brand-black font-medium leading-relaxed italic">
-            HSLUConnect and its developers (Team A) hold NO RESPONSIBILITY for any incidents, damages, or losses occurring during events discovered on this platform. Users organize and attend peer-led events entirely at their own risk.
-          </p>
-        </section>
+                <section class="mb-12">
+                    <div
+                        class="flex items-center gap-3 mb-6 text-brand-primary"
+                    >
+                        <UserCheck size={24} strokeWidth={1.5} />
+                        <h2
+                            class="text-xl font-black uppercase tracking-widest m-0"
+                        >
+                            3. Eligibility
+                        </h2>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed font-light">
+                        Access is strictly limited to current HSLU students. You
+                        must use your verified <code
+                            class="bg-brand-offwhite px-2 py-1 rounded"
+                            >@stud.hslu.ch</code
+                        > email. Any account found using non-student credentials will
+                        be terminated immediately.
+                    </p>
+                </section>
 
-        <section class="mb-12">
-          <h2 class="text-xl font-black uppercase tracking-widest mb-6 text-brand-black">4. Content & Conduct</h2>
-          <ul class="space-y-4 text-slate-600 font-light">
-            <li>Users must follow the HSLU Student Code of Conduct.</li>
-            <li>Spamming, commercial solicitation, or fraudulent events are strictly prohibited.</li>
-            <li>Official events are reserved for verified staff and student representatives.</li>
-          </ul>
-        </section>
+                <section
+                    class="mb-12 p-8 bg-brand-primary/5 rounded-3xl border border-brand-primary/20"
+                >
+                    <div
+                        class="flex items-center gap-3 mb-4 text-brand-primary"
+                    >
+                        <ShieldAlert size={24} strokeWidth={1.5} />
+                        <h2
+                            class="text-xl font-black uppercase tracking-widest m-0"
+                        >
+                            4. Liability Waiver
+                        </h2>
+                    </div>
+                    <p
+                        class="text-brand-black font-medium leading-relaxed italic"
+                    >
+                        HSLUConnect and its developers (Team A) and Lucerne
+                        University of Applied Sciences (HSLU) hold ZERO
+                        LIABILITY for any incidents, damages, or losses
+                        occurring during events discovered on this platform.
+                        Users organize and attend peer-led events entirely at
+                        their own risk.
+                    </p>
+                </section>
 
-      </div>
+                 <section class="mb-12">
+                    <div
+                        class="flex items-center gap-3 mb-6 text-brand-primary"
+                    >
+                        <FunnelX size={24} strokeWidth={1.5} />
+                        <h2
+                            class="text-xl font-black uppercase tracking-widest m-0"
+                        >
+                            5. Content Moderation & Conduct
+                        </h2>
+                    </div>
+                     <ul class="space-y-4 text-slate-600 font-light">
+                        <li>
+                            Users must follow the HSLU Student Code of Conduct.
+                        </li>
+                        <li>
+                            Spamming, commercial solicitation, or fraudulent
+                            events are strictly prohibited.
+                        </li>
+                        <li>
+                            Official events are reserved for verified staff and
+                            student representatives.
+                        </li>
+                        <li>
+                            The HSLUConnect team reserves the right to remove
+                            any content or terminate any account that violates
+                            these terms or is deemed inappropriate for the
+                            student community.
+                        </li>
+                    </ul>
+                </section>
+            </div>
+        </div>
     </div>
-  </div>
 </Layout>

@@ -1,67 +1,111 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { Eye, ShieldCheck, Database } from 'lucide-astro';
+import { Eye, ShieldCheck, Database } from "lucide-astro";
 ---
 
 <Layout title="Privacy Policy">
   <div class="bg-creamy-melt min-h-screen pt-40 pb-24">
     <div class="max-w-3xl mx-auto px-8">
-      
       <header class="mb-16">
-        <h1 class="text-5xl font-light text-brand-black tracking-tighter italic mb-4">
+        <h1
+          class="text-5xl font-light text-brand-black tracking-tighter italic mb-4"
+        >
           Privacy <span class="font-semibold text-brand-primary">Policy</span>
         </h1>
-        <p class="text-slate-500 font-light text-lg">Your data safety within the HSLU community.</p>
+        <p class="text-slate-500 font-light text-lg">
+          Your data safety within the HSLU community. Your privacy is paramount.
+          This policy describes how we handle your data within the HSLUConnect
+          ecosystem.
+        </p>
       </header>
 
-      <div class="bg-white/80 backdrop-blur-xl p-12 rounded-[3rem] shadow-2xl border border-white/40">
-        
+      <div
+        class="bg-white/80 backdrop-blur-xl p-12 rounded-[3rem] shadow-2xl border border-white/40"
+      >
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <div class="text-center">
-            <div class="w-12 h-12 bg-brand-primary/10 rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4">
+            <div
+              class="w-12 h-12 bg-brand-primary/10 rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4"
+            >
               <Database size={20} />
             </div>
-            <h3 class="text-[10px] font-black uppercase tracking-widest">Collection</h3>
-            <p class="text-[11px] text-slate-400 mt-2 font-light">Name, HSLU Email, Program & Campus.</p>
+            <h3 class="text-[10px] font-black uppercase tracking-widest">
+              Collection
+            </h3>
+            <p class="text-[11px] text-slate-400 mt-2 font-light">
+              Name, HSLU Email, Academic Program & Campus Location, Profile Picture (Optional) and Bio (Optional).
+            </p>
           </div>
           <div class="text-center">
-            <div class="w-12 h-12 bg-brand-primary/10 rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4">
+            <div
+              class="w-12 h-12 bg-brand-primary/10 rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4"
+            >
               <Eye size={20} />
             </div>
-            <h3 class="text-[10px] font-black uppercase tracking-widest">Visibility</h3>
-            <p class="text-[11px] text-slate-400 mt-2 font-light">Visible only to other verified HSLU students.</p>
+            <h3 class="text-[10px] font-black uppercase tracking-widest">
+              Visibility
+            </h3>
+            <p class="text-[11px] text-slate-400 mt-2 font-light">
+              Visible only to other verified HSLU students to facilitate social
+              interaction. Official events may share attendee lists with HSLU
+              staff for academic purposes.
+            </p>
           </div>
           <div class="text-center">
-            <div class="w-12 h-12 bg-brand-primary/10 rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4">
+            <div
+              class="w-12 h-12 bg-brand-primary/10 rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4"
+            >
               <ShieldCheck size={20} />
             </div>
-            <h3 class="text-[10px] font-black uppercase tracking-widest">Security</h3>
-            <p class="text-[11px] text-slate-400 mt-2 font-light">Encrypted via Supabase auth protocols.</p>
+            <h3 class="text-[10px] font-black uppercase tracking-widest">
+              Security
+            </h3>
+            <p class="text-[11px] text-slate-400 mt-2 font-light">
+              Encrypted via Supabase auth protocols. However, no digital
+              platform is 100% secure, and users are encouraged to use unique
+              passwords.
+            </p>
           </div>
         </div>
 
         <article class="prose prose-slate max-w-none space-y-10">
           <section>
-            <h2 class="text-xl font-bold text-brand-black italic tracking-tight">Data Usage</h2>
+            <h2
+              class="text-xl font-bold text-brand-black italic tracking-tight"
+            >
+              Data Usage
+            </h2>
             <p class="text-slate-500 font-light leading-relaxed">
-              We use your academic details (Campus and Programme) to categorize events and provide you with a relevant local schedule. We do not sell or share your data with third-party advertisers.
+              We do not sell or share your data with third-party advertisers.
+              We use your data to verify your status as an HSLU student, facilitate event RSVPs and
+              peer-to-peer networking and personalize your dashboard experience. We
+              use your academic details (Campus and Programme) to categorize
+              events and provide you with a relevant local schedule.
             </p>
           </section>
 
           <section>
-            <h2 class="text-xl font-bold text-brand-black italic tracking-tight">User Rights</h2>
+            <h2
+              class="text-xl font-bold text-brand-black italic tracking-tight"
+            >
+              User Rights
+            </h2>
             <p class="text-slate-500 font-light leading-relaxed">
-              You have the right to update your profile, change your campus, or delete your account at any time. Account deletion will purge your profile and associated RSVPs from our active database.
+              You have the right to update your profile, change your campus, or
+              delete your account at any time. For permanent account deletion
+              and data scrubbing, please contact the HSLUConnect development
+              team.
             </p>
           </section>
 
           <footer class="pt-10 border-t border-black/5 text-center">
-            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">
+            <p
+              class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300"
+            >
               MAITPRO Team A | Secure Student Ecosystem
             </p>
           </footer>
         </article>
-
       </div>
     </div>
   </div>
