@@ -216,7 +216,7 @@ import {
     }
 
     function getEventRsvpCount(eventId: string) {
-      return rsvps.filter((rsvp) => rsvp.event_id === eventId && rsvp.status === "going").length;
+      return rsvps.filter((rsvp) => rsvp.event_id === eventId && rsvp.status === "approved").length;
     }
 
     function switchSection(sectionName: string) {
@@ -237,7 +237,7 @@ import {
     function renderOverview() {
       totalUsers.textContent = String(profiles.length);
       totalEvents.textContent = String(events.length);
-      totalRsvps.textContent = String(rsvps.filter((rsvp) => rsvp.status === "going").length);
+      totalRsvps.textContent = String(rsvps.filter((rsvp) => rsvp.status === "approved").length);
 
       const latestEvents = [...events]
         .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime())

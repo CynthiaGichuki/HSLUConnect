@@ -3,6 +3,8 @@ import "../styles/global.css";
 import { Youtube, Instagram, Twitter, User, LogOut, ChevronDown, ShieldCheck } from "lucide-astro";
 
 const { title } = Astro.props;
+const isHome = title === "HSLUConnect";
+
 ---
 
 <html lang="en">
@@ -20,7 +22,9 @@ const { title } = Astro.props;
           <div class="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center font-black text-brand-black group-hover:rotate-12 transition-transform">
             H
           </div>
-          <span class="text-xl font-black tracking-tighter text-white uppercase">HSLUConnect</span>
+          <span class={`text-xl font-black tracking-tighter uppercase ${isHome ? "text-white" : "text-brand-black"}`}>
+            HSLUConnect
+          </span>
         </a>
 
         <div class="hidden lg:flex items-center bg-white/90 backdrop-blur-md px-10 py-3 rounded-full shadow-xl border border-white/20 gap-8 mx-4">
