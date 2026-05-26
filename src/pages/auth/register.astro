@@ -17,17 +17,14 @@ const campusData = {
     "MSc IT, Digitalisation & Sustainability",
     "BSc Computer Science",
     "BSc Artificial Intelligence",
-    "BSc Immersive Technologies"
+    "BSc Immersive Technologies",
   ],
   Luzern: [
     "MSc Business Administration",
     "MSc Banking & Finance",
-    "BSc International Business"
+    "BSc International Business",
   ],
-  Horw: [
-    "BSc Engineering", 
-    "BSc Architecture"
-  ],
+  Horw: ["BSc Engineering", "BSc Architecture"],
 };
 ---
 
@@ -103,21 +100,44 @@ const campusData = {
           </div>
 
           <div class="space-y-2">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">Campus</label>
+            <label
+              class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic"
+              >Campus</label
+            >
             <div class="relative group">
-              <MapPin size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
-              <select id="campus" class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all appearance-none cursor-pointer">
+              <MapPin
+                size={18}
+                class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors"
+              />
+              <select
+                id="campus"
+                class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all appearance-none cursor-pointer"
+              >
                 <option value="" disabled selected>Select your campus</option>
-                {Object.keys(campusData).map(campus => <option value={campus}>{campus}</option>)}
+                {
+                  Object.keys(campusData).map((campus) => (
+                    <option value={campus}>{campus}</option>
+                  ))
+                }
               </select>
             </div>
           </div>
 
           <div class="space-y-2">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic">Programme</label>
+            <label
+              class="block text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary ml-1 italic"
+              >Programme</label
+            >
             <div class="relative group">
-              <BookOpen size={18} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
-              <select id="programme" disabled class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all appearance-none cursor-pointer disabled:opacity-50">
+              <BookOpen
+                size={18}
+                class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors"
+              />
+              <select
+                id="programme"
+                disabled
+                class="w-full bg-brand-offwhite border-none rounded-2xl py-4 pl-14 pr-6 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 outline-none transition-all appearance-none cursor-pointer disabled:opacity-50"
+              >
                 <option value="">Choose campus first</option>
               </select>
             </div>
@@ -163,11 +183,28 @@ const campusData = {
             </p>
           </div>
 
-          <div class="p-5 bg-brand-offwhite rounded-2xl border border-black/5 space-y-4">
+          <div
+            class="p-5 bg-brand-offwhite rounded-2xl border border-black/5 space-y-4"
+          >
             <div class="flex items-start gap-3">
-              <input type="checkbox" id="terms-check" class="mt-1 w-4 h-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary cursor-pointer" required />
-              <label for="terms-check" class="text-[10px] text-slate-500 leading-relaxed font-medium">
-                I agree to the <a href="terms" class="text-brand-black underline">Terms of Service</a> and <a href="privacy" class="text-brand-black underline">Privacy Policy</a>. I understand that HSLUConnect acts as a directory only and holds <strong>no liability</strong> for incidents occurring during peer-led events.
+              <input
+                type="checkbox"
+                id="terms-check"
+                class="mt-1 w-4 h-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary cursor-pointer"
+                required
+              />
+              <label
+                for="terms-check"
+                class="text-[10px] text-slate-500 leading-relaxed font-medium"
+              >
+                I agree to the <a
+                  href="terms"
+                  class="text-brand-black underline">Terms of Service</a
+                > and <a href="privacy" class="text-brand-black underline"
+                  >Privacy Policy</a
+                >. I understand that HSLUConnect acts as a directory only and
+                holds <strong>no liability</strong> for incidents occurring during
+                peer-led events.
               </label>
             </div>
           </div>
@@ -214,16 +251,30 @@ const campusData = {
 
   <script>
     import { supabase } from "../../lib/supabase";
+    import { Filter } from "bad-words";
+
+    const filter = new Filter();
 
     const campusMap = {
-        "Rotkreuz": ["MSc IT, Digitalisation & Sustainability", "BSc Computer Science", "BSc Artificial Intelligence", "BSc Immersive Technologies"],
-        "Luzern": ["MSc Business Administration", "MSc Banking & Finance", "BSc International Business"],
-        "Horw": ["BSc Engineering", "BSc Architecture"]
+      Rotkreuz: [
+        "MSc IT, Digitalisation & Sustainability",
+        "BSc Computer Science",
+        "BSc Artificial Intelligence",
+        "BSc Immersive Technologies",
+      ],
+      Luzern: [
+        "MSc Business Administration",
+        "MSc Banking & Finance",
+        "BSc International Business",
+      ],
+      Horw: ["BSc Engineering", "BSc Architecture"],
     };
 
     const form = document.getElementById("register-form") as HTMLFormElement;
     const campusSelect = document.getElementById("campus") as HTMLSelectElement;
-    const programmeSelect = document.getElementById("programme") as HTMLSelectElement;
+    const programmeSelect = document.getElementById(
+      "programme",
+    ) as HTMLSelectElement;
     const fullNameInput = document.getElementById(
       "full_name",
     ) as HTMLInputElement;
@@ -240,18 +291,19 @@ const campusData = {
       "submit-text",
     ) as HTMLSpanElement;
 
-    campusSelect.addEventListener('change', (e) => {
-        const campus = (e.target as HTMLSelectElement).value;
-        const programmes = campusMap[campus as keyof typeof campusMap];
-        
-        programmeSelect.disabled = false;
-        programmeSelect.innerHTML = '<option value="" disabled selected>Select your programme</option>';
-        programmes.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p;
-            opt.textContent = p;
-            programmeSelect.appendChild(opt);
-        });
+    campusSelect.addEventListener("change", (e) => {
+      const campus = (e.target as HTMLSelectElement).value;
+      const programmes = campusMap[campus as keyof typeof campusMap];
+
+      programmeSelect.disabled = false;
+      programmeSelect.innerHTML =
+        '<option value="" disabled selected>Select your programme</option>';
+      programmes.forEach((p) => {
+        const opt = document.createElement("option");
+        opt.value = p;
+        opt.textContent = p;
+        programmeSelect.appendChild(opt);
+      });
     });
 
     function showMessage(text: string, type: "error" | "success") {
@@ -271,11 +323,13 @@ const campusData = {
       const programme = programmeSelect.value.trim();
       const bio = bioInput.value.trim();
       const password = passwordInput.value;
-      const termsAccepted = (document.getElementById("terms-check") as HTMLInputElement).checked;
+      const termsAccepted = (
+        document.getElementById("terms-check") as HTMLInputElement
+      ).checked;
 
       if (!termsAccepted) {
-          showMessage("You must accept the terms to register.", "error");
-          return;
+        showMessage("You must accept the terms to register.", "error");
+        return;
       }
 
       if (!fullName) {
@@ -299,6 +353,11 @@ const campusData = {
           "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol.",
           "error",
         );
+        return;
+      }
+
+      if (filter.isProfane(bio) || filter.isProfane(fullName)) {
+        showMessage("Please keep your profile professional. Profanity is not allowed.", "error");
         return;
       }
 
