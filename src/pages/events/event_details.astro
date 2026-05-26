@@ -793,6 +793,10 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2, User } from 'lucide-a
           currentEvent.event_type === "private"
             ? "pending"
             : "approved";
+        const generatedQrToken =
+          newStatus === "approved"
+            ? crypto.randomUUID()
+            : null;
 
         if (newStatus === "approved" && !hasAvailableApprovedSlot(currentUserId)) {
           showActionMessage("This event is already full.", "error");
@@ -808,10 +812,7 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2, User } from 'lucide-a
               event_id: eventId,
               user_id: currentUserId,
               status: newStatus,
-              qr_token:
-                newStatus === "approved"
-                  ? crypto.randomUUID()
-                  : null,
+              qr_token: generatedQrToken,
             },
             {
               onConflict: "event_id,user_id",
@@ -823,6 +824,21 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2, User } from 'lucide-a
           rsvpBtn.disabled = false;
           renderRsvpButton();
           return;
+        }
+
+        if (newStatus === "approved") {
+          const { data: sessionData } = await supabase.auth.getSession();
+          const attendeeEmail = sessionData.session?.user?.email;
+
+          if (attendeeEmail && generatedQrToken) {
+            await supabase.functions.invoke("send-rsvp-qr", {
+              body: {
+                email: attendeeEmail,
+                eventTitle: currentEvent.title,
+                qrToken: generatedQrToken,
+              },
+            });
+          }
         }
 
         showActionMessage(

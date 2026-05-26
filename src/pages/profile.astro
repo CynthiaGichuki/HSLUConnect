@@ -186,6 +186,13 @@ const campusData = {
       role: string | null;
     };
 
+    type UserMetadata = {
+      full_name?: string;
+      programme?: string;
+      campus?: string;
+      bio?: string;
+    };
+
     type EventItem = {
       id: string;
       title: string;
@@ -428,7 +435,33 @@ const campusData = {
         return;
       }
 
-      renderProfile(profile as Profile, user.email);
+      let resolvedProfile = profile as Profile;
+      const metadata = (user.user_metadata ?? {}) as UserMetadata;
+      const needsMetadataSync =
+        (!resolvedProfile.full_name && metadata.full_name) ||
+        (!resolvedProfile.programme && metadata.programme) ||
+        (!resolvedProfile.campus && metadata.campus) ||
+        (!resolvedProfile.bio && metadata.bio);
+
+      if (needsMetadataSync) {
+        const { data: syncedProfile, error: syncError } = await supabase
+          .from("profiles")
+          .update({
+            full_name: resolvedProfile.full_name || metadata.full_name || null,
+            programme: resolvedProfile.programme || metadata.programme || null,
+            campus: resolvedProfile.campus || metadata.campus || null,
+            bio: resolvedProfile.bio || metadata.bio || null,
+          })
+          .eq("id", user.id)
+          .select("id, full_name, email, programme, campus, bio, role")
+          .single();
+
+        if (!syncError && syncedProfile) {
+          resolvedProfile = syncedProfile as Profile;
+        }
+      }
+
+      renderProfile(resolvedProfile, user.email);
 
       const { data: createdEvents, error: createdError } = await supabase
         .from("events")
