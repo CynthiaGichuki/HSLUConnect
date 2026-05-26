@@ -22,18 +22,16 @@ import { Users, ShieldCheck, Sparkles } from "lucide-astro";
       <h1
         class="text-6xl md:text-8xl font-light text-white tracking-tight mb-4"
       >
-        Life at <span class="font-semibold text-brand-primary underline"
-          >HSLU</span
-        >
+        Life at <span class="font-semibold text-brand-primary underline">HSLU</span>
       </h1>
 
       <p
         class="text-xl text-white/80 max-w-md font-light leading-relaxed mb-10 tracking-wide"
       >
-        Discover student-led events, cultural mixers, and official workshops.
+        Discover. Connect. Belong.
       </p>
 
-      <div class="flex gap-4">
+      <div class="flex flex-wrap gap-4">
         <a
           href="/explore"
           class="bg-brand-primary text-brand-black px-10 py-5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white transition-all shadow-2xl shadow-black/20"
@@ -46,6 +44,13 @@ import { Users, ShieldCheck, Sparkles } from "lucide-astro";
           class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-all"
         >
           Host Yours
+        </a>
+
+        <a
+          href="/tiers"
+          class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-all"
+        >
+          View Tiers
         </a>
       </div>
     </div>
@@ -242,11 +247,16 @@ import { Users, ShieldCheck, Sparkles } from "lucide-astro";
     }
 
     async function loadFeaturedEvents() {
+      const today = new Date().toISOString().split("T")[0];
+
       const { data: eventsData, error: eventsError } = await supabase
         .from("events")
         .select(
           "id, title, event_type, category, event_date, event_time, entry_fee, description",
         )
+        .eq("approval_status", "approved")
+        .neq("event_type", "private")
+        .gte("event_date", today)
         .order("event_date", { ascending: true });
 
       if (eventsError) {
@@ -257,7 +267,7 @@ import { Users, ShieldCheck, Sparkles } from "lucide-astro";
       const { data: rsvpData, error: rsvpError } = await supabase
         .from("event_rsvps")
         .select("event_id, status")
-        .eq("status", "going");
+        .eq("status", "approved");
 
       if (rsvpError) {
         featuredStatus.textContent = rsvpError.message;

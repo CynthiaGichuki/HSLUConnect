@@ -103,6 +103,7 @@ import { ChevronDown, Filter, Search } from 'lucide-astro';
       participant_limit: number | null;
       entry_fee: number | null;
       description: string | null;
+      created_by: string | null;
     };
 
     type RSVPItem = {
@@ -344,6 +345,7 @@ import { ChevronDown, Filter, Search } from 'lucide-astro';
 
     async function loadEvents() {
       await loadSession();
+      const today = new Date().toISOString().split("T")[0];
 
       const { data: rsvpData, error: rsvpError } = await supabase
         .from("event_rsvps")
@@ -365,8 +367,9 @@ import { ChevronDown, Filter, Search } from 'lucide-astro';
 
       const { data: eventsData, error: eventsError } = await supabase
         .from("events")
-        .select("id, title, event_type, category, event_date, event_time, location, participant_limit, entry_fee, description")
+        .select("id, title, event_type, category, event_date, event_time, location, participant_limit, entry_fee, description, created_by")
         .eq("approval_status", "approved")
+        .gte("event_date", today)
         .order("event_date", { ascending: true });
 
       if (eventsError) {
@@ -375,7 +378,11 @@ import { ChevronDown, Filter, Search } from 'lucide-astro';
       }
 
       events = (eventsData ?? []).filter((event) => {
-        return event.event_type !== "private" || goingEventIds.has(event.id);
+        return (
+          event.event_type !== "private" ||
+          goingEventIds.has(event.id) ||
+          event.created_by === currentUserId
+        );
       });
 
       privateFilterOption.classList.toggle(

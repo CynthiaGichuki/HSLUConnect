@@ -23,13 +23,27 @@ import { QrCode } from 'lucide-astro';
           <p class="text-[10px] font-black uppercase tracking-widest text-brand-primary mb-2">Attendee</p>
           <p id="attendee-name" class="text-xl font-light italic text-brand-black"></p>
           <p id="attendee-email" class="text-xs text-slate-400 mt-1"></p>
+          <p id="attendee-tier" class="text-[10px] font-black uppercase tracking-widest text-slate-300 mt-3"></p>
 
           <div class="border-t border-black/5 mt-6 pt-6">
             <p class="text-[10px] font-black uppercase tracking-widest text-brand-primary mb-2">Event</p>
             <p id="event-title" class="text-sm font-bold text-brand-black"></p>
             <p id="event-date" class="text-xs text-slate-400 mt-1"></p>
           </div>
+
+          <div class="border-t border-black/5 mt-6 pt-6">
+            <p class="text-[10px] font-black uppercase tracking-widest text-brand-primary mb-2">Payment</p>
+            <p id="payment-status" class="text-sm font-bold text-brand-black"></p>
+            <p id="payment-note" class="text-xs text-slate-400 mt-1"></p>
+          </div>
         </div>
+
+        <button
+          id="mark-paid-btn"
+          class="hidden w-full py-4 bg-green-50 text-green-700 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-green-100 transition-all disabled:opacity-60 disabled:cursor-not-allowed mb-3"
+        >
+          Mark as Paid
+        </button>
 
         <button
           id="check-in-btn"
@@ -50,11 +64,21 @@ import { QrCode } from 'lucide-astro';
 
   <script>
     import { supabase } from "../../lib/supabase";
+    import {
+      formatMembershipTierLabel,
+      getPayableAmount,
+      normalizeMembershipTier,
+    } from "../../lib/membership";
 
     type CheckInRow = {
       event_id: string;
       user_id: string;
       status: "pending" | "approved" | "rejected" | "cancelled";
+      payment_status?: "not_required" | "unpaid" | "paid" | null;
+      paid_at?: string | null;
+      paid_amount?: number | null;
+      checked_in?: boolean | null;
+      checked_in_at?: string | null;
       events:
         | {
             id: string;
@@ -62,6 +86,7 @@ import { QrCode } from 'lucide-astro';
             event_date: string;
             event_time: string | null;
             created_by: string;
+            entry_fee?: number | null;
           }
         | {
             id: string;
@@ -69,16 +94,19 @@ import { QrCode } from 'lucide-astro';
             event_date: string;
             event_time: string | null;
             created_by: string;
+            entry_fee?: number | null;
           }[]
         | null;
       profiles:
         | {
             full_name: string | null;
             email: string | null;
+            membership_tier?: string | null;
           }
         | {
             full_name: string | null;
             email: string | null;
+            membership_tier?: string | null;
           }[]
         | null;
     };
@@ -89,10 +117,14 @@ import { QrCode } from 'lucide-astro';
     const checkStatus = document.getElementById("check-status") as HTMLParagraphElement;
     const checkCard = document.getElementById("check-card") as HTMLDivElement;
     const checkInBtn = document.getElementById("check-in-btn") as HTMLButtonElement;
+    const markPaidBtn = document.getElementById("mark-paid-btn") as HTMLButtonElement;
     const attendeeName = document.getElementById("attendee-name") as HTMLParagraphElement;
     const attendeeEmail = document.getElementById("attendee-email") as HTMLParagraphElement;
+    const attendeeTier = document.getElementById("attendee-tier") as HTMLParagraphElement;
     const eventTitle = document.getElementById("event-title") as HTMLParagraphElement;
     const eventDate = document.getElementById("event-date") as HTMLParagraphElement;
+    const paymentStatus = document.getElementById("payment-status") as HTMLParagraphElement;
+    const paymentNote = document.getElementById("payment-note") as HTMLParagraphElement;
     const checkIcon = document.getElementById("check-icon") as HTMLDivElement;
 
     let checkInRow: CheckInRow | null = null;
@@ -109,6 +141,51 @@ import { QrCode } from 'lucide-astro';
       });
 
       return timeValue ? `${date} at ${timeValue.slice(0, 5)}` : date;
+    }
+
+    function formatCurrency(amount: number) {
+      return `${amount.toFixed(2)} CHF`;
+    }
+
+    function getEffectivePaymentStatus() {
+      if (!checkInRow) return "not_required";
+
+      return checkInRow.payment_status ?? (Number(getSingle(checkInRow.events)?.entry_fee ?? 0) > 0 ? "unpaid" : "not_required");
+    }
+
+    function renderPaymentState() {
+      if (!checkInRow) return;
+
+      const event = getSingle(checkInRow.events);
+      const attendee = getSingle(checkInRow.profiles);
+      const tier = normalizeMembershipTier(attendee?.membership_tier);
+      const amountDue = getPayableAmount(event?.entry_fee, tier);
+      const effectivePaymentStatus = getEffectivePaymentStatus();
+
+      attendeeTier.textContent = `${formatMembershipTierLabel(tier)} member`;
+
+      if (effectivePaymentStatus === "paid") {
+        paymentStatus.textContent = `Paid${checkInRow.paid_amount ? ` • ${formatCurrency(Number(checkInRow.paid_amount))}` : ""}`;
+        paymentNote.textContent = checkInRow.paid_at
+          ? `Confirmed on ${new Date(checkInRow.paid_at).toLocaleString("en-US", {
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}`
+          : "Payment has been confirmed.";
+      } else if (effectivePaymentStatus === "unpaid") {
+        paymentStatus.textContent = `Unpaid • ${formatCurrency(amountDue)} due`;
+        paymentNote.textContent = "Confirm cash or TWINT in person before check-in.";
+      } else {
+        paymentStatus.textContent = "Free Access";
+        paymentNote.textContent = "No payment is required for this attendee.";
+      }
+
+      markPaidBtn.classList.toggle("hidden", effectivePaymentStatus !== "unpaid");
+      checkInBtn.classList.remove("hidden");
+      checkInBtn.disabled = effectivePaymentStatus === "unpaid" || checkInRow.checked_in === true;
+      checkInBtn.textContent = checkInRow.checked_in ? "Already Checked In" : "Confirm Check-In";
     }
 
     function setFailure(text: string) {
@@ -153,16 +230,21 @@ import { QrCode } from 'lucide-astro';
           event_id,
           user_id,
           status,
+          payment_status,
+          paid_at,
+          paid_amount,
+          checked_in,
+          checked_in_at,
           events:event_id (
             id,
             title,
             event_date,
             event_time,
-            created_by
+            created_by,
+            entry_fee
           ),
           profiles:user_id (
-            full_name,
-            email
+            *
           )
         `)
         .eq("qr_token", token)
@@ -199,9 +281,53 @@ import { QrCode } from 'lucide-astro';
       eventDate.textContent = formatDate(event.event_date, event.event_time);
 
       checkCard.classList.remove("hidden");
-      checkInBtn.classList.remove("hidden");
+      renderPaymentState();
       setSuccess("QR code is valid.");
     }
+
+    markPaidBtn.addEventListener("click", async () => {
+      if (!checkInRow || !token) return;
+
+      const event = getSingle(checkInRow.events);
+      const attendee = getSingle(checkInRow.profiles);
+      const amountDue = getPayableAmount(event?.entry_fee, attendee?.membership_tier);
+
+      const { data: sessionData } = await supabase.auth.getSession();
+      const currentUserId = sessionData.session?.user.id;
+
+      markPaidBtn.disabled = true;
+      markPaidBtn.textContent = "Saving...";
+
+      const { error } = await supabase
+        .from("event_rsvps")
+        .update({
+          payment_status: "paid",
+          paid_at: new Date().toISOString(),
+          paid_amount: amountDue,
+          payment_confirmed_by: currentUserId,
+        })
+        .eq("qr_token", token)
+        .eq("status", "approved");
+
+      if (error) {
+        markPaidBtn.disabled = false;
+        markPaidBtn.textContent = "Mark as Paid";
+        setFailure(`${error.message} If payment columns are missing, run the membership and payments migration.`);
+        return;
+      }
+
+      checkInRow = {
+        ...checkInRow,
+        payment_status: "paid",
+        paid_at: new Date().toISOString(),
+        paid_amount: amountDue,
+      };
+
+      markPaidBtn.disabled = false;
+      markPaidBtn.textContent = "Mark as Paid";
+      renderPaymentState();
+      setSuccess("Payment confirmed. You can now check in the attendee.");
+    });
 
     checkInBtn.addEventListener("click", async () => {
       if (!checkInRow || !token) return;
@@ -211,7 +337,10 @@ import { QrCode } from 'lucide-astro';
 
       const { error } = await supabase
         .from("event_rsvps")
-        .update({ checked_in_at: new Date().toISOString() })
+        .update({
+          checked_in: true,
+          checked_in_at: new Date().toISOString(),
+        })
         .eq("qr_token", token)
         .eq("status", "approved");
 
@@ -222,7 +351,13 @@ import { QrCode } from 'lucide-astro';
         return;
       }
 
-      checkInBtn.textContent = "Checked In";
+      checkInRow = {
+        ...checkInRow,
+        checked_in: true,
+        checked_in_at: new Date().toISOString(),
+      };
+
+      renderPaymentState();
       setSuccess("Attendee checked in successfully.");
     });
 

@@ -60,6 +60,24 @@ const campusData = {
           </button>
         </div>
 
+        <div class="bg-white rounded-[3rem] p-8 border border-black/5">
+          <p class="text-[10px] font-black uppercase tracking-[0.3em] text-brand-primary mb-4">
+            Membership Tier
+          </p>
+          <h3 id="membership-tier-name" class="text-3xl font-light italic text-brand-black mb-3">
+            Discover
+          </h3>
+          <p id="membership-tier-summary" class="text-sm text-slate-500 font-light leading-relaxed mb-6">
+            One free event per month.
+          </p>
+          <a
+            href="/tiers"
+            class="inline-flex justify-center w-full py-4 bg-brand-black text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-primary hover:text-brand-black transition-all"
+          >
+            View All Tiers
+          </a>
+        </div>
+
         <div id="edit-profile-form-wrapper" class="hidden bg-white rounded-[3rem] p-8 border border-black/5">
           <h3 class="text-xl font-light italic text-brand-black mb-6">
             Edit <span class="font-semibold text-brand-primary">Profile</span>
@@ -152,7 +170,7 @@ const campusData = {
           </a>
         </div>
 
-        <div id="events-list" class="space-y-4"></div>
+        <div id="events-list" class="space-y-10"></div>
       </main>
 
     </div>
@@ -160,6 +178,7 @@ const campusData = {
 
   <script>
     import { supabase } from "../lib/supabase";
+    import { formatMembershipTierLabel, normalizeMembershipTier } from "../lib/membership";
 
     const campusMap = {
       Rotkreuz: [
@@ -184,6 +203,7 @@ const campusData = {
       campus: string | null;
       bio: string | null;
       role: string | null;
+      membership_tier?: string | null;
     };
 
     type UserMetadata = {
@@ -191,6 +211,7 @@ const campusData = {
       programme?: string;
       campus?: string;
       bio?: string;
+      membership_tier?: string;
     };
 
     type EventItem = {
@@ -224,8 +245,24 @@ const campusData = {
     const editCampus = document.getElementById("edit-campus") as HTMLSelectElement;
     const editBio = document.getElementById("edit-bio") as HTMLTextAreaElement;
     const editMessage = document.getElementById("edit-message") as HTMLParagraphElement;
+    const membershipTierName = document.getElementById("membership-tier-name") as HTMLHeadingElement;
+    const membershipTierSummary = document.getElementById("membership-tier-summary") as HTMLParagraphElement;
 
     let currentProfile: Profile | null = null;
+
+    function getMembershipSummary(tier: string | null | undefined) {
+      const normalizedTier = normalizeMembershipTier(tier);
+
+      if (normalizedTier === "belong") {
+        return "Access to all free and paid events with CHF 5 off paid events.";
+      }
+
+      if (normalizedTier === "connect") {
+        return "Access to all free and paid events for CHF 5 per month.";
+      }
+
+      return "One free event per month.";
+    }
 
     function populateProgrammeOptions(campus: string, selectedProgramme = "") {
       const programmes = campusMap[campus as keyof typeof campusMap] ?? [];
@@ -266,7 +303,7 @@ const campusData = {
       return ` at ${timeValue.slice(0, 5)}`;
     }
 
-    function renderProfile(profile: Profile, authEmail: string | undefined) {
+    function renderProfile(profile: Profile, authEmail: string | undefined, membershipTier: string | null | undefined) {
       currentProfile = profile;
 
       profileName.textContent = profile.full_name || "HSLU Student";
@@ -274,6 +311,8 @@ const campusData = {
       profileEmail.textContent = profile.email || authEmail || "Email not available";
       profileCampus.textContent = profile.campus || "Campus not added";
       profileProgramme.textContent = profile.programme || "Programme not added";
+      membershipTierName.textContent = formatMembershipTierLabel(membershipTier);
+      membershipTierSummary.textContent = getMembershipSummary(membershipTier);
 
       if (profile.bio) {
         profileBio.textContent = profile.bio;
@@ -369,7 +408,12 @@ const campusData = {
         return;
       }
 
-      renderProfile(data as Profile, user.email);
+      const savedProfile = {
+        ...(data as Profile),
+        membership_tier: currentProfile?.membership_tier ?? user.user_metadata?.membership_tier ?? "discover",
+      };
+
+      renderProfile(savedProfile, user.email, savedProfile.membership_tier);
       showEditMessage("Profile updated successfully.", "success");
 
       setTimeout(() => {
@@ -377,16 +421,14 @@ const campusData = {
       }, 900);
     });
 
-    function renderEvents(events: Array<EventItem & { schedule_type: "Created" | "RSVP'd" }>) {
-      if (events.length === 0) {
-        scheduleStatus.textContent = "You have not created or joined any events yet.";
-        eventsList.innerHTML = "";
-        return;
-      }
+    function getEventTimestamp(event: EventItem) {
+      const datePart = event.event_date;
+      const timePart = event.event_time ? event.event_time.slice(0, 5) : "23:59";
+      return new Date(`${datePart}T${timePart}`);
+    }
 
-      scheduleStatus.textContent = `${events.length} event${events.length === 1 ? "" : "s"} in your schedule`;
-
-      eventsList.innerHTML = events.map((event) => {
+    function renderEventCards(events: Array<EventItem & { schedule_type: "Created" | "RSVP'd" }>) {
+      return events.map((event) => {
         const iconClass = event.schedule_type === "Created"
           ? "bg-brand-primary text-brand-black"
           : "bg-brand-black text-white";
@@ -415,6 +457,49 @@ const campusData = {
       }).join("");
     }
 
+    function renderEvents(events: Array<EventItem & { schedule_type: "Created" | "RSVP'd" }>) {
+      if (events.length === 0) {
+        scheduleStatus.textContent = "You have not created or joined any events yet.";
+        eventsList.innerHTML = "";
+        return;
+      }
+
+      const now = new Date();
+      const upcomingEvents = events.filter((event) => getEventTimestamp(event) >= now);
+      const pastEvents = events.filter((event) => getEventTimestamp(event) < now);
+
+      scheduleStatus.textContent = `${events.length} event${events.length === 1 ? "" : "s"} in your schedule`;
+
+      eventsList.innerHTML = `
+        <section class="space-y-4">
+          <div>
+            <h4 class="text-2xl font-light italic text-brand-black">
+              Upcoming <span class="font-semibold text-brand-primary">Events</span>
+            </h4>
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-300 mt-2">
+              ${upcomingEvents.length} upcoming
+            </p>
+          </div>
+          ${upcomingEvents.length > 0
+            ? renderEventCards(upcomingEvents)
+            : '<p class="text-sm text-slate-400 font-light">No upcoming events yet.</p>'}
+        </section>
+        <section class="space-y-4">
+          <div>
+            <h4 class="text-2xl font-light italic text-brand-black">
+              Past <span class="font-semibold text-brand-primary">Events</span>
+            </h4>
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-300 mt-2">
+              ${pastEvents.length} completed
+            </p>
+          </div>
+          ${pastEvents.length > 0
+            ? renderEventCards(pastEvents)
+            : '<p class="text-sm text-slate-400 font-light">No past events yet.</p>'}
+        </section>
+      `;
+    }
+
     async function loadProfilePage() {
       const { data: sessionData } = await supabase.auth.getSession();
       const user = sessionData.session?.user;
@@ -426,7 +511,7 @@ const campusData = {
 
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
-        .select("id, full_name, email, programme, campus, bio, role")
+        .select("*")
         .eq("id", user.id)
         .single();
 
@@ -461,7 +546,11 @@ const campusData = {
         }
       }
 
-      renderProfile(resolvedProfile, user.email);
+      renderProfile(
+        resolvedProfile,
+        user.email,
+        resolvedProfile.membership_tier || metadata.membership_tier || "discover",
+      );
 
       const { data: createdEvents, error: createdError } = await supabase
         .from("events")
@@ -478,7 +567,7 @@ const campusData = {
         .from("event_rsvps")
         .select("event_id")
         .eq("user_id", user.id)
-        .eq("status", "going");
+        .eq("status", "approved");
 
       if (rsvpError) {
         scheduleStatus.textContent = rsvpError.message;
@@ -517,7 +606,7 @@ const campusData = {
         }));
 
       const combinedEvents = [...created, ...rsvpd].sort((a, b) => {
-        return new Date(a.event_date).getTime() - new Date(b.event_date).getTime();
+        return getEventTimestamp(a).getTime() - getEventTimestamp(b).getTime();
       });
 
       renderEvents(combinedEvents);
