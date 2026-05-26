@@ -226,7 +226,7 @@ import { Users, ShieldCheck, Sparkles } from "lucide-astro";
           <div class="pt-8 mt-4 border-t border-slate-100 flex items-center justify-between">
             <div>
               <span class="block text-[10px] font-black text-brand-primary uppercase tracking-tighter mb-1">
-                ${!event.entry_fee || Number(event.entry_fee) === 0 ? "Free Access" : `${Number(event.entry_fee).toFixed(2)} CHF`}
+                ${!event.entry_fee || Number(event.entry_fee) === 0 ? "Free Access" : `${Number(event.entry_fee).toFixed(2)} CHF - Payable at Kiosk`}
               </span>
               <span class="block text-[10px] font-bold text-slate-300 uppercase tracking-tighter">
                 ${event.rsvp_count} RSVP${event.rsvp_count === 1 ? "" : "s"} • ${formatDate(event.event_date)}
