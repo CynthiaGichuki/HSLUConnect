@@ -1,0 +1,143 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { ArrowLeft, BookOpen, CalendarDays, Mail, MapPin, User } from 'lucide-astro';
+---
+
+<Layout title="Student Profile">
+  <div class="bg-white min-h-screen pt-40 pb-24">
+    <div class="max-w-3xl mx-auto px-8">
+      <a href="/explore" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-primary transition-all mb-10">
+        <ArrowLeft size={14} /> Back to Events
+      </a>
+
+      <p id="profile-status" class="text-sm text-slate-400 mb-8">Loading profile...</p>
+
+      <section id="public-profile" class="hidden bg-brand-offwhite rounded-[3rem] p-10 border border-black/5">
+        <div class="flex flex-col md:flex-row md:items-center gap-8 mb-10">
+          <div class="w-28 h-28 rounded-full bg-brand-primary/20 text-brand-primary flex items-center justify-center shrink-0">
+            <User size={54} strokeWidth={1.2} />
+          </div>
+
+          <div class="min-w-0">
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-brand-primary mb-3">
+              Event Creator
+            </p>
+            <div class="flex flex-wrap items-center gap-3">
+              <h1 id="student-name" class="text-4xl font-light italic tracking-tight text-brand-black">
+                Loading...
+              </h1>
+              <span
+                id="admin-badge"
+                class="hidden px-3 py-1 rounded-full bg-brand-black text-white text-[9px] font-black uppercase tracking-[0.2em]"
+              >
+                Admin
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-2xl p-5 border border-black/5">
+            <div class="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">
+              <Mail size={14} class="text-brand-primary" />
+              Email
+            </div>
+            <p id="student-email" class="text-sm font-medium text-brand-black break-words"></p>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-black/5">
+            <div class="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">
+              <MapPin size={14} class="text-brand-primary" />
+              Campus
+            </div>
+            <p id="student-campus" class="text-sm font-medium text-brand-black"></p>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-black/5">
+            <div class="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">
+              <BookOpen size={14} class="text-brand-primary" />
+              Course
+            </div>
+            <p id="student-programme" class="text-sm font-medium text-brand-black"></p>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-black/5">
+            <div class="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">
+              <CalendarDays size={14} class="text-brand-primary" />
+              Events Created
+            </div>
+            <p id="student-event-count" class="text-sm font-medium text-brand-black"></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from "../../lib/supabase";
+
+    type Profile = {
+      full_name: string | null;
+      email: string | null;
+      campus: string | null;
+      programme: string | null;
+      role: string | null;
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const profileId = params.get("id");
+
+    const profileStatus = document.getElementById("profile-status") as HTMLParagraphElement;
+    const publicProfile = document.getElementById("public-profile") as HTMLElement;
+    const studentName = document.getElementById("student-name") as HTMLHeadingElement;
+    const studentEmail = document.getElementById("student-email") as HTMLParagraphElement;
+    const studentCampus = document.getElementById("student-campus") as HTMLParagraphElement;
+    const studentProgramme = document.getElementById("student-programme") as HTMLParagraphElement;
+    const studentEventCount = document.getElementById("student-event-count") as HTMLParagraphElement;
+    const adminBadge = document.getElementById("admin-badge") as HTMLSpanElement;
+
+    async function loadPublicProfile() {
+      if (!profileId) {
+        profileStatus.textContent = "Profile not found.";
+        return;
+      }
+
+      const [{ data: profile, error: profileError }, eventsResult] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("full_name, email, campus, programme, role")
+          .eq("id", profileId)
+          .maybeSingle(),
+        supabase
+          .from("events")
+          .select("id", { count: "exact", head: true })
+          .eq("created_by", profileId),
+      ]);
+
+      if (profileError || !profile) {
+        profileStatus.textContent = profileError?.message || "Profile not found.";
+        return;
+      }
+
+      if (eventsResult.error) {
+        profileStatus.textContent = eventsResult.error.message;
+        return;
+      }
+
+      const student = profile as Profile;
+      const eventCount = eventsResult.count ?? 0;
+
+      studentName.textContent = student.full_name || "HSLU Student";
+      studentEmail.textContent = student.email || "Email unavailable";
+      studentCampus.textContent = student.campus || "Campus not added";
+      studentProgramme.textContent = student.programme || "Course not added";
+      studentEventCount.textContent = `${eventCount} event${eventCount === 1 ? "" : "s"}`;
+      adminBadge.classList.toggle("hidden", student.role !== "admin");
+
+      profileStatus.textContent = "";
+      publicProfile.classList.remove("hidden");
+    }
+
+    loadPublicProfile();
+  </script>
+</Layout>

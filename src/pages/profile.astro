@@ -1,6 +1,21 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { User, Mail, MapPin, Settings, Plus, BookOpen } from 'lucide-astro';
+
+const campusData = {
+  Rotkreuz: [
+    "MSc IT, Digitalisation & Sustainability",
+    "BSc Computer Science",
+    "BSc Artificial Intelligence",
+    "BSc Immersive Technologies",
+  ],
+  Luzern: [
+    "MSc Business Administration",
+    "MSc Banking & Finance",
+    "BSc International Business",
+  ],
+  Horw: ["BSc Engineering", "BSc Architecture"],
+};
 ---
 
 <Layout title="My Profile">
@@ -59,19 +74,37 @@ import { User, Mail, MapPin, Settings, Plus, BookOpen } from 'lucide-astro';
               required
             />
 
-            <input
-              id="edit-programme"
-              type="text"
-              placeholder="Programme"
-              class="w-full bg-brand-offwhite rounded-2xl p-4 text-sm outline-none"
-            />
+            <div class="relative">
+              <MapPin
+                size={16}
+                class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"
+              />
+              <select
+                id="edit-campus"
+                class="w-full bg-brand-offwhite rounded-2xl py-4 pl-12 pr-4 text-sm outline-none appearance-none cursor-pointer"
+              >
+                <option value="">Select your campus</option>
+                {
+                  Object.keys(campusData).map((campus) => (
+                    <option value={campus}>{campus}</option>
+                  ))
+                }
+              </select>
+            </div>
 
-            <input
-              id="edit-campus"
-              type="text"
-              placeholder="Campus"
-              class="w-full bg-brand-offwhite rounded-2xl p-4 text-sm outline-none"
-            />
+            <div class="relative">
+              <BookOpen
+                size={16}
+                class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"
+              />
+              <select
+                id="edit-programme"
+                disabled
+                class="w-full bg-brand-offwhite rounded-2xl py-4 pl-12 pr-4 text-sm outline-none appearance-none cursor-pointer disabled:opacity-50"
+              >
+                <option value="">Choose campus first</option>
+              </select>
+            </div>
 
             <textarea
               id="edit-bio"
@@ -128,6 +161,21 @@ import { User, Mail, MapPin, Settings, Plus, BookOpen } from 'lucide-astro';
   <script>
     import { supabase } from "../lib/supabase";
 
+    const campusMap = {
+      Rotkreuz: [
+        "MSc IT, Digitalisation & Sustainability",
+        "BSc Computer Science",
+        "BSc Artificial Intelligence",
+        "BSc Immersive Technologies",
+      ],
+      Luzern: [
+        "MSc Business Administration",
+        "MSc Banking & Finance",
+        "BSc International Business",
+      ],
+      Horw: ["BSc Engineering", "BSc Architecture"],
+    };
+
     type Profile = {
       id: string;
       full_name: string | null;
@@ -165,12 +213,29 @@ import { User, Mail, MapPin, Settings, Plus, BookOpen } from 'lucide-astro';
     const saveProfileBtn = document.getElementById("save-profile-btn") as HTMLButtonElement;
 
     const editFullName = document.getElementById("edit-full-name") as HTMLInputElement;
-    const editProgramme = document.getElementById("edit-programme") as HTMLInputElement;
-    const editCampus = document.getElementById("edit-campus") as HTMLInputElement;
+    const editProgramme = document.getElementById("edit-programme") as HTMLSelectElement;
+    const editCampus = document.getElementById("edit-campus") as HTMLSelectElement;
     const editBio = document.getElementById("edit-bio") as HTMLTextAreaElement;
     const editMessage = document.getElementById("edit-message") as HTMLParagraphElement;
 
     let currentProfile: Profile | null = null;
+
+    function populateProgrammeOptions(campus: string, selectedProgramme = "") {
+      const programmes = campusMap[campus as keyof typeof campusMap] ?? [];
+
+      editProgramme.disabled = programmes.length === 0;
+      editProgramme.innerHTML = programmes.length === 0
+        ? '<option value="">Choose campus first</option>'
+        : '<option value="">Select your programme</option>';
+
+      programmes.forEach((programme) => {
+        const option = document.createElement("option");
+        option.value = programme;
+        option.textContent = programme;
+        option.selected = programme === selectedProgramme;
+        editProgramme.appendChild(option);
+      });
+    }
 
     function escapeHtml(value: string) {
       return value
@@ -216,13 +281,17 @@ import { User, Mail, MapPin, Settings, Plus, BookOpen } from 'lucide-astro';
       if (!currentProfile) return;
 
       editFullName.value = currentProfile.full_name ?? "";
-      editProgramme.value = currentProfile.programme ?? "";
       editCampus.value = currentProfile.campus ?? "";
+      populateProgrammeOptions(editCampus.value, currentProfile.programme ?? "");
       editBio.value = currentProfile.bio ?? "";
 
       editMessage.textContent = "";
       editMessage.classList.add("hidden");
     }
+
+    editCampus.addEventListener("change", () => {
+      populateProgrammeOptions(editCampus.value);
+    });
 
     function showEditMessage(text: string, type: "error" | "success") {
       editMessage.textContent = text;

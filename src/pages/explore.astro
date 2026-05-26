@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Filter, Search } from 'lucide-astro';
+import { ChevronDown, Filter, Search } from 'lucide-astro';
 ---
 
 <Layout title="Explore Events">
@@ -14,32 +14,73 @@ import { Filter, Search } from 'lucide-astro';
       </p>
     </header>
 
-    <section class="flex flex-wrap items-center gap-8 mb-16 py-6 border-y border-black/5">
-      <div class="flex items-center gap-3 text-brand-black/40 uppercase text-[10px] font-black tracking-[0.3em]">
-        <Filter size={14} strokeWidth={2.5} />
-        Filter
-      </div>
+    <section class="mb-16 py-6 border-y border-black/5">
+      <div class="flex flex-wrap items-center gap-4">
+        <div id="filter-menu" class="relative">
+          <button
+            id="filter-menu-btn"
+            type="button"
+            aria-expanded="false"
+            class="h-12 inline-flex items-center gap-3 bg-brand-black text-brand-white rounded-full px-6 text-[10px] font-black uppercase tracking-[0.25em] hover:bg-brand-primary hover:text-brand-black transition-all"
+          >
+            <Filter size={14} strokeWidth={2.5} />
+            <span id="filter-button-label">Filters</span>
+            <ChevronDown id="filter-chevron" size={14} class="transition-transform" />
+          </button>
 
-      <div class="flex gap-2">
-        <button data-filter="All" class="filter-button px-6 py-2.5 bg-brand-black text-brand-white rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-brand-primary hover:text-brand-black">
-          All
-        </button>
-        <button data-filter="public" class="filter-button px-6 py-2.5 bg-brand-offwhite text-brand-black rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-brand-primary/20">
-          Public
-        </button>
-        <button data-filter="official" class="filter-button px-6 py-2.5 bg-brand-offwhite text-brand-black rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-brand-primary/20">
-          Official
-        </button>
-      </div>
+          <div
+            id="filter-panel"
+            class="hidden absolute left-0 top-16 z-20 w-[min(92vw,430px)] bg-white rounded-[2rem] border border-black/5 shadow-2xl shadow-black/10 p-6 space-y-6"
+          >
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">Type</span>
+                <button id="clear-filters-btn" type="button" class="text-[9px] font-black uppercase tracking-widest text-brand-primary hover:text-brand-black transition-colors">
+                  Reset
+                </button>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <button data-filter="All" class="filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">All</button>
+                <button data-filter="public" class="filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">Public</button>
+                <button data-filter="official" class="filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">Official</button>
+                <button id="private-filter-option" data-filter="private" class="hidden filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">Private</button>
+              </div>
+            </div>
 
-      <div class="flex-1 min-w-[300px] md:ml-auto relative group">
-        <Search size={16} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-primary transition-colors" />
-        <input
-          id="search-input"
-          type="text"
-          placeholder="Search by keyword, location, or type..."
-          class="w-full bg-brand-offwhite border border-transparent focus:border-brand-primary/30 focus:bg-white rounded-full py-3 pl-12 pr-6 text-sm font-light transition-all outline-none"
-        />
+            <div>
+              <span class="block text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">Category</span>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <button data-category-filter="All" class="category-filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">All</button>
+                <button data-category-filter="Social" class="category-filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">Social</button>
+                <button data-category-filter="Academic" class="category-filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">Academic</button>
+                <button data-category-filter="Career" class="category-filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">Career</button>
+                <button data-category-filter="Cultural" class="category-filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">Cultural</button>
+                <button data-category-filter="Sports" class="category-filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">Sports</button>
+              </div>
+            </div>
+
+            <div>
+              <span class="block text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">Price</span>
+              <div class="grid grid-cols-3 gap-2">
+                <button data-fee-filter="All" class="fee-filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">All</button>
+                <button data-fee-filter="free" class="fee-filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">Free</button>
+                <button data-fee-filter="paid" class="fee-filter-button filter-option h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">Paid</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="active-filter-summary" class="hidden flex-wrap items-center gap-2"></div>
+
+        <div class="flex-1 min-w-[280px] md:ml-auto relative group">
+          <Search size={16} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-primary transition-colors" />
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Search by keyword, location, or type..."
+            class="w-full bg-brand-offwhite border border-transparent focus:border-brand-primary/30 focus:bg-white rounded-full py-3 pl-12 pr-6 text-sm font-light transition-all outline-none"
+          />
+        </div>
       </div>
     </section>
 
@@ -74,12 +115,28 @@ import { Filter, Search } from 'lucide-astro';
     const status = document.getElementById("events-status") as HTMLParagraphElement;
     const searchInput = document.getElementById("search-input") as HTMLInputElement;
     const filterButtons = document.querySelectorAll<HTMLButtonElement>(".filter-button");
+    const categoryFilterButtons = document.querySelectorAll<HTMLButtonElement>(".category-filter-button");
+    const feeFilterButtons = document.querySelectorAll<HTMLButtonElement>(".fee-filter-button");
+    const filterMenu = document.getElementById("filter-menu") as HTMLDivElement;
+    const filterMenuBtn = document.getElementById("filter-menu-btn") as HTMLButtonElement;
+    const filterPanel = document.getElementById("filter-panel") as HTMLDivElement;
+    const filterChevron = document.getElementById("filter-chevron") as HTMLElement;
+    const filterButtonLabel = document.getElementById("filter-button-label") as HTMLSpanElement;
+    const activeFilterSummary = document.getElementById("active-filter-summary") as HTMLDivElement;
+    const clearFiltersBtn = document.getElementById("clear-filters-btn") as HTMLButtonElement;
+    const privateFilterOption = document.getElementById("private-filter-option") as HTMLButtonElement;
 
     let events: EventItem[] = [];
     let activeFilter = "All";
+    let activeCategoryFilter = "All";
+    let activeFeeFilter = "All";
     let currentUserId: string | null = null;
     let goingEventIds = new Set<string>();
     let attendeeCounts = new Map<string, number>();
+
+    function formatFilterLabel(value: string) {
+      return value === "All" ? value : value.charAt(0).toUpperCase() + value.slice(1);
+    }
 
     function escapeHtml(value: string) {
       return value
@@ -189,15 +246,55 @@ import { Filter, Search } from 'lucide-astro';
       `;
     }
 
-    function updateFilterButtons() {
-      filterButtons.forEach((button) => {
-        const isActive = button.dataset.filter === activeFilter;
+    function updateSegmentedButtons(
+      buttons: NodeListOf<HTMLButtonElement>,
+      dataKey: "filter" | "categoryFilter" | "feeFilter",
+      activeValue: string
+    ) {
+      buttons.forEach((button) => {
+        const isActive = button.dataset[dataKey] === activeValue;
 
         button.classList.toggle("bg-brand-black", isActive);
         button.classList.toggle("text-brand-white", isActive);
         button.classList.toggle("bg-brand-offwhite", !isActive);
         button.classList.toggle("text-brand-black", !isActive);
+        button.classList.toggle("hover:bg-brand-primary/20", !isActive);
       });
+    }
+
+    function updateFilterButtons() {
+      updateSegmentedButtons(filterButtons, "filter", activeFilter);
+      updateSegmentedButtons(categoryFilterButtons, "categoryFilter", activeCategoryFilter);
+      updateSegmentedButtons(feeFilterButtons, "feeFilter", activeFeeFilter);
+
+      const activeFilters = [
+        activeFilter !== "All" ? formatFilterLabel(activeFilter) : null,
+        activeCategoryFilter !== "All" ? activeCategoryFilter : null,
+        activeFeeFilter !== "All" ? formatFilterLabel(activeFeeFilter) : null,
+      ].filter(Boolean);
+
+      filterButtonLabel.textContent = activeFilters.length > 0
+        ? `Filters ${activeFilters.length}`
+        : "Filters";
+
+      if (activeFilters.length === 0) {
+        activeFilterSummary.classList.add("hidden");
+        activeFilterSummary.innerHTML = "";
+        return;
+      }
+
+      activeFilterSummary.classList.remove("hidden");
+      activeFilterSummary.innerHTML = activeFilters.map((filter) => `
+        <span class="px-3 py-1.5 bg-brand-offwhite text-brand-black rounded-full text-[9px] font-black uppercase tracking-widest">
+          ${escapeHtml(String(filter))}
+        </span>
+      `).join("");
+    }
+
+    function setFilterPanelOpen(isOpen: boolean) {
+      filterPanel.classList.toggle("hidden", !isOpen);
+      filterMenuBtn.setAttribute("aria-expanded", String(isOpen));
+      filterChevron.classList.toggle("rotate-180", isOpen);
     }
 
     function renderEvents() {
@@ -206,6 +303,15 @@ import { Filter, Search } from 'lucide-astro';
       const filteredEvents = events.filter((event) => {
         const matchesFilter =
           activeFilter === "All" || event.event_type === activeFilter;
+
+        const matchesCategory =
+          activeCategoryFilter === "All" || event.category === activeCategoryFilter;
+
+        const isFree = !event.entry_fee || Number(event.entry_fee) === 0;
+        const matchesFee =
+          activeFeeFilter === "All" ||
+          (activeFeeFilter === "free" && isFree) ||
+          (activeFeeFilter === "paid" && !isFree);
 
         const matchesSearch = [
           event.title,
@@ -218,7 +324,7 @@ import { Filter, Search } from 'lucide-astro';
           .toLowerCase()
           .includes(searchTerm);
 
-        return matchesFilter && matchesSearch;
+        return matchesFilter && matchesCategory && matchesFee && matchesSearch;
       });
 
       if (filteredEvents.length === 0) {
@@ -239,18 +345,6 @@ import { Filter, Search } from 'lucide-astro';
     async function loadEvents() {
       await loadSession();
 
-      const { data: eventsData, error: eventsError } = await supabase
-        .from("events")
-        .select("id, title, event_type, category, event_date, event_time, location, participant_limit, entry_fee, description")
-        .eq("approval_status", "approved")
-        .neq("event_type", "private")
-        .order("event_date", { ascending: true });
-
-      if (eventsError) {
-        status.textContent = eventsError.message;
-        return;
-      }
-
       const { data: rsvpData, error: rsvpError } = await supabase
         .from("event_rsvps")
         .select("event_id, user_id, status")
@@ -263,12 +357,30 @@ import { Filter, Search } from 'lucide-astro';
 
       const rsvps = (rsvpData ?? []) as RSVPItem[];
 
-      events = eventsData ?? [];
-
       goingEventIds = new Set(
         rsvps
           .filter((rsvp) => rsvp.user_id === currentUserId)
           .map((rsvp) => rsvp.event_id)
+      );
+
+      const { data: eventsData, error: eventsError } = await supabase
+        .from("events")
+        .select("id, title, event_type, category, event_date, event_time, location, participant_limit, entry_fee, description")
+        .eq("approval_status", "approved")
+        .order("event_date", { ascending: true });
+
+      if (eventsError) {
+        status.textContent = eventsError.message;
+        return;
+      }
+
+      events = (eventsData ?? []).filter((event) => {
+        return event.event_type !== "private" || goingEventIds.has(event.id);
+      });
+
+      privateFilterOption.classList.toggle(
+        "hidden",
+        !events.some((event) => event.event_type === "private")
       );
 
       attendeeCounts = new Map<string, number>();
@@ -289,6 +401,46 @@ import { Filter, Search } from 'lucide-astro';
         updateFilterButtons();
         renderEvents();
       });
+    });
+
+    categoryFilterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        activeCategoryFilter = button.dataset.categoryFilter ?? "All";
+        updateFilterButtons();
+        renderEvents();
+      });
+    });
+
+    feeFilterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        activeFeeFilter = button.dataset.feeFilter ?? "All";
+        updateFilterButtons();
+        renderEvents();
+      });
+    });
+
+    filterMenuBtn.addEventListener("click", () => {
+      setFilterPanelOpen(filterPanel.classList.contains("hidden"));
+    });
+
+    clearFiltersBtn.addEventListener("click", () => {
+      activeFilter = "All";
+      activeCategoryFilter = "All";
+      activeFeeFilter = "All";
+      updateFilterButtons();
+      renderEvents();
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!filterMenu.contains(event.target as Node)) {
+        setFilterPanelOpen(false);
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        setFilterPanelOpen(false);
+      }
     });
 
     searchInput.addEventListener("input", renderEvents);

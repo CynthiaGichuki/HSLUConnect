@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
+import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2, User } from 'lucide-astro';
 ---
 
 <Layout title="Event Details">
@@ -21,7 +21,23 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
             <span id="approval-status-badge" class="hidden text-[9px] uppercase tracking-[0.2em] font-black px-4 py-2 rounded-full"></span>
           </div>
 
-          <h1 id="event-title" class="text-5xl font-light italic tracking-tight text-brand-black mb-8"></h1>
+          <h1 id="event-title" class="text-5xl font-light italic tracking-tight text-brand-black mb-6"></h1>
+
+          <a
+            id="creator-profile-link"
+            href="#"
+            class="inline-flex items-center gap-3 bg-white rounded-full py-2 pl-2 pr-5 border border-black/5 hover:bg-brand-black hover:text-white transition-all mb-8 group"
+          >
+            <span class="w-9 h-9 rounded-full bg-brand-primary/20 text-brand-primary flex items-center justify-center group-hover:bg-white/10">
+              <User size={16} />
+            </span>
+            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-white/60">
+              Hosted by
+            </span>
+            <span id="creator-name" class="text-sm font-bold text-brand-black group-hover:text-white">
+              Loading...
+            </span>
+          </a>
 
           <p id="event-description" class="text-slate-500 font-light leading-relaxed mb-10"></p>
 
@@ -57,6 +73,27 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
             </button>
 
             <p id="action-message" class="hidden mt-4 text-xs font-medium"></p>
+          </div>
+
+          <div id="qr-pass-panel" class="hidden bg-brand-offwhite rounded-[3rem] p-8 border border-black/5 text-center">
+            <h2 class="text-xl font-light italic text-brand-black mb-3">
+              Entry <span class="font-semibold text-brand-primary">QR</span>
+            </h2>
+            <p class="text-xs text-slate-500 font-light mb-6">
+              Show this code at check-in.
+            </p>
+            <img
+              id="qr-pass-image"
+              alt="Event check-in QR code"
+              class="w-48 h-48 mx-auto rounded-2xl bg-white p-3 border border-black/5"
+            />
+            <a
+              id="qr-pass-link"
+              href="#"
+              class="mt-6 inline-flex justify-center w-full py-3 bg-white text-brand-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-black hover:text-white transition-all"
+            >
+              Open Check-In Code
+            </a>
           </div>
 
           <div id="creator-panel" class="hidden bg-brand-offwhite rounded-[3rem] p-8 border border-black/5">
@@ -140,6 +177,7 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
     type RsvpRow = {
       user_id: string;
       status: "pending" | "approved" | "rejected" | "cancelled";
+      qr_token: string | null;
       profiles:
         | {
             full_name: string | null;
@@ -152,6 +190,11 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
         | null;
     };
 
+    type CreatorProfile = {
+      full_name: string | null;
+      email: string | null;
+    };
+
     let currentUserId: string | null = null;
     let currentUserRole: string | null = null;
     let currentEvent: any = null;
@@ -159,6 +202,7 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
     let currentUserRsvpStatus: string | undefined = undefined;
     let attendeeEmails: string[] = [];
     let allRsvps: RsvpRow[] = [];
+    let approvedRsvpCount = 0;
 
     const status = document.getElementById("status") as HTMLParagraphElement;
     const eventContent = document.getElementById("event-content") as HTMLElement;
@@ -173,8 +217,13 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
     const eventLocation = document.getElementById("event-location") as HTMLSpanElement;
     const eventSpots = document.getElementById("event-spots") as HTMLSpanElement;
     const eventFee = document.getElementById("event-fee") as HTMLSpanElement;
+    const creatorProfileLink = document.getElementById("creator-profile-link") as HTMLAnchorElement;
+    const creatorName = document.getElementById("creator-name") as HTMLSpanElement;
 
     const rsvpBtn = document.getElementById("rsvp-btn") as HTMLButtonElement;
+    const qrPassPanel = document.getElementById("qr-pass-panel") as HTMLDivElement;
+    const qrPassImage = document.getElementById("qr-pass-image") as HTMLImageElement;
+    const qrPassLink = document.getElementById("qr-pass-link") as HTMLAnchorElement;
     const creatorPanel = document.getElementById("creator-panel") as HTMLDivElement;
     const attendeesPanel = document.getElementById("attendees-panel") as HTMLDivElement;
     const attendeesList = document.getElementById("attendees-list") as HTMLDivElement;
@@ -241,6 +290,36 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
       return Array.isArray(rsvp.profiles)
         ? rsvp.profiles[0]
         : rsvp.profiles;
+    }
+
+    function hasAvailableApprovedSlot(ignoreUserId?: string) {
+      const limit = currentEvent?.participant_limit;
+      if (!limit) return true;
+
+      const approvedCount = allRsvps.filter((rsvp) => {
+        return rsvp.status === "approved" && rsvp.user_id !== ignoreUserId;
+      }).length;
+
+      return approvedCount < Number(limit);
+    }
+
+    function isEventFullForCurrentUser() {
+      if (!currentEvent?.participant_limit) return false;
+      if (currentUserRsvpStatus === "approved") return false;
+
+      return approvedRsvpCount >= Number(currentEvent.participant_limit);
+    }
+
+    function renderQrPass() {
+      qrPassPanel.classList.add("hidden");
+
+      const currentUserRsvp = allRsvps.find((rsvp) => rsvp.user_id === currentUserId);
+      if (!currentUserRsvp?.qr_token || currentUserRsvp.status !== "approved") return;
+
+      const checkInUrl = `${window.location.origin}/events/check_in?token=${encodeURIComponent(currentUserRsvp.qr_token)}`;
+      qrPassImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(checkInUrl)}`;
+      qrPassLink.href = checkInUrl;
+      qrPassPanel.classList.remove("hidden");
     }
 
     async function loadSession() {
@@ -317,6 +396,12 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
         return;
       }
 
+      if (isEventFullForCurrentUser()) {
+        rsvpBtn.textContent = "Event Full";
+        rsvpBtn.disabled = true;
+        return;
+      }
+
       rsvpBtn.textContent = "RSVP Now";
       rsvpBtn.disabled = false;
     }
@@ -341,17 +426,28 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
 
       currentEvent = event;
 
+      const { data: creatorProfile } = await supabase
+        .from("profiles")
+        .select("full_name, email")
+        .eq("id", event.created_by)
+        .maybeSingle();
+
+      const creator = creatorProfile as CreatorProfile | null;
+      creatorName.textContent = creator?.full_name || creator?.email || "HSLU Student";
+      creatorProfileLink.href = `/users/profile?id=${encodeURIComponent(event.created_by)}`;
+
       const isCreator = currentUserId === event.created_by;
       const isAdmin = currentUserRole === "admin";
-      const canManage = isCreator || isAdmin;
+      const canViewRestrictedEvent = isCreator || isAdmin;
+      const canManageEvent = isCreator;
       const hasPrivateToken = Boolean(event.private_token && privateToken === event.private_token);
 
-      if (event.approval_status !== "approved" && !canManage) {
+      if (event.approval_status !== "approved" && !canViewRestrictedEvent) {
         status.textContent = "This event is still awaiting admin approval.";
         return;
       }
 
-      if (event.event_type === "private" && !canManage && !hasPrivateToken) {
+      if (event.event_type === "private" && !canViewRestrictedEvent && !hasPrivateToken) {
         status.textContent = "This private event can only be viewed with an invite link.";
         return;
       }
@@ -361,6 +457,7 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
         .select(`
           user_id,
           status,
+          qr_token,
           profiles:user_id (
             full_name,
             email
@@ -379,6 +476,7 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
         ["pending", "approved", "rejected"].includes(rsvp.status)
       );
       const attendeeCount = approvedRsvps.length;
+      approvedRsvpCount = attendeeCount;
 
       const currentUserRsvp = allRsvps.find((rsvp) => rsvp.user_id === currentUserId);
       currentUserRsvpStatus = currentUserRsvp?.status;
@@ -402,7 +500,7 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
       }
 
       const canSeePrivateDetails =
-        canManage ||
+        canViewRestrictedEvent ||
         event.event_type !== "private" ||
         currentUserRsvpStatus === "approved";
 
@@ -422,13 +520,14 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
   ? "Free Access"
   : `${Number(event.entry_fee).toFixed(2)} CHF`;
 
-        renderApprovalBadge(event, canManage);
+      renderApprovalBadge(event, canViewRestrictedEvent);
       renderRsvpButton();
+      renderQrPass();
 
-      if (canManage) {
+      if (canManageEvent) {
         creatorPanel.classList.remove("hidden");
         attendeesPanel.classList.remove("hidden");
-        renderAttendees(activeRsvps, canManage);
+        renderAttendees(activeRsvps, canManageEvent);
       } else {
         creatorPanel.classList.add("hidden");
         attendeesPanel.classList.add("hidden");
@@ -443,9 +542,9 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
       fillEditForm();
 
       status.textContent =
-        canManage && event.approval_status === "pending"
+        canViewRestrictedEvent && event.approval_status === "pending"
           ? "This event is awaiting admin approval."
-          : canManage && event.approval_status === "rejected"
+          : canViewRestrictedEvent && event.approval_status === "rejected"
             ? `This event was rejected. ${event.rejected_reason ?? ""}`
             : "";
 
@@ -586,6 +685,11 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
 
           const qrToken = crypto.randomUUID();
 
+          if (!hasAvailableApprovedSlot(userId)) {
+            showActionMessage("This event is already full. Increase the participant limit before approving more RSVPs.", "error");
+            return;
+          }
+
           const { error } = await supabase
             .from("event_rsvps")
             .update({
@@ -690,6 +794,13 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
             ? "pending"
             : "approved";
 
+        if (newStatus === "approved" && !hasAvailableApprovedSlot(currentUserId)) {
+          showActionMessage("This event is already full.", "error");
+          rsvpBtn.disabled = false;
+          renderRsvpButton();
+          return;
+        }
+
         const { error } = await supabase
           .from("event_rsvps")
           .upsert(
@@ -755,7 +866,7 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
         (isAdmin && currentEvent.event_type === "official");
 
       if (!canEdit) {
-        showActionMessage("Only the creator can edit this event. Official events can be edited by admins.", "error");
+        showActionMessage("Only the event creator can edit this event. Official events can also be edited by admins.", "error");
         return;
       }
 
@@ -773,6 +884,19 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
         entry_fee: editFee.value ? Number(editFee.value) : 0,
         description: editDescription.value.trim() || null,
       };
+
+      if (
+        updatedEvent.participant_limit !== null &&
+        approvedRsvpCount > updatedEvent.participant_limit
+      ) {
+        saveEventBtn.disabled = false;
+        saveEventBtn.textContent = "Save Changes";
+        showActionMessage(
+          `Participant limit cannot be below the ${approvedRsvpCount} approved RSVP${approvedRsvpCount === 1 ? "" : "s"}.`,
+          "error"
+        );
+        return;
+      }
 
       const { error } = await supabase
         .from("events")
@@ -796,36 +920,27 @@ import { Calendar, MapPin, Users, ArrowLeft, Edit, Trash2 } from 'lucide-astro';
       if (!currentEvent || !currentUserId) return;
 
       const isCreator = currentUserId === currentEvent.created_by;
-      const isAdmin = currentUserRole === "admin";
 
-      const confirmed = confirm(
-        isAdmin && !isCreator
-          ? "Reject this event instead of deleting it?"
-          : "Are you sure you want to delete this event?"
-      );
+      if (!isCreator) {
+        showActionMessage("Only the event creator can delete this event.", "error");
+        return;
+      }
+
+      const confirmed = confirm("Are you sure you want to delete this event?");
 
       if (!confirmed) return;
 
-      const query = supabase.from("events");
-
-      const { error } =
-        isAdmin && !isCreator
-          ? await query
-              .update({
-                approval_status: "rejected",
-                rejected_reason: "Rejected by admin.",
-              })
-              .eq("id", currentEvent.id)
-          : await query
-              .delete()
-              .eq("id", currentEvent.id);
+      const { error } = await supabase
+        .from("events")
+        .delete()
+        .eq("id", currentEvent.id);
 
       if (error) {
         showActionMessage(error.message, "error");
         return;
       }
 
-      window.location.href = isAdmin ? "/admin" : "/explore";
+      window.location.href = "/explore";
     });
 
     copyPrivateLinkBtn.addEventListener("click", async () => {
