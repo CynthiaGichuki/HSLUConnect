@@ -46,12 +46,6 @@ import { Users, ShieldCheck, Sparkles } from "lucide-astro";
           Host Yours
         </a>
 
-        <a
-          href="/tiers"
-          class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-all"
-        >
-          View Tiers
-        </a>
       </div>
     </div>
   </section>
@@ -83,8 +77,9 @@ import { Users, ShieldCheck, Sparkles } from "lucide-astro";
     >
       <div class="flex flex-col items-center">
         <span
+          id="student-count"
           class="text-5xl font-black text-brand-black tracking-tighter italic"
-          >500+</span
+          >...</span
         >
         <p
           class="text-brand-primary font-black mt-2 uppercase text-[10px] tracking-[0.2em]"
@@ -92,7 +87,6 @@ import { Users, ShieldCheck, Sparkles } from "lucide-astro";
           Verified Students
         </p>
       </div>
-
       <div class="flex flex-col items-center">
         <span
           class="text-5xl font-black text-brand-black tracking-tighter italic"
@@ -178,6 +172,7 @@ import { Users, ShieldCheck, Sparkles } from "lucide-astro";
     const featuredStatus = document.getElementById(
       "featured-status",
     ) as HTMLParagraphElement;
+    const studentCountEl = document.getElementById("student-count") as HTMLSpanElement;
 
     function escapeHtml(value: string) {
       return value
@@ -249,6 +244,8 @@ import { Users, ShieldCheck, Sparkles } from "lucide-astro";
     async function loadFeaturedEvents() {
       const today = new Date().toISOString().split("T")[0];
 
+      fetchTotalStudentCount();
+
       const { data: eventsData, error: eventsError } = await supabase
         .from("events")
         .select(
@@ -308,6 +305,20 @@ import { Users, ShieldCheck, Sparkles } from "lucide-astro";
 
       featuredStatus.textContent = "";
       featuredGrid.innerHTML = trendingEvents.map(featuredEventCard).join("");
+    }
+
+    async function fetchTotalStudentCount() {
+      const { count, error } = await supabase
+        .from("profiles")
+        .select("*", { count: "exact", head: true }); // Head: true ensures efficient count check without fetching row objects
+
+      if (error) {
+        console.error("Failed to fetch student metrics:", error.message);
+        studentCountEl.textContent = "500+"; // Fallback to prototype number if call drops
+        return;
+      }
+
+      studentCountEl.textContent = count ? count.toString() : "0";
     }
 
     loadFeaturedEvents();
