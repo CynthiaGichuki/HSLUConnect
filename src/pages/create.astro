@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro';
+import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag, Coins } from 'lucide-astro';
 ---
 
 <Layout title="Host Event">
@@ -111,6 +111,25 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
           </div>
 
           <div>
+              <label class="block text-[10px] font-black uppercase tracking-widest text-brand-primary mb-3 ml-1 italic">
+                Entry Fee (CHF)
+              </label>
+              <div class="relative group">
+                <Coins size={16} class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
+                <input
+                  id="entry_fee"
+                  type="number"
+                  min="0"
+                  step="0.50"
+                  value="0"
+                  placeholder="0.00 (Free)"
+                  class="w-full bg-brand-offwhite border-none rounded-2xl py-5 pl-12 pr-5 text-sm font-light focus:ring-2 focus:ring-brand-primary/30 transition-all outline-none"
+                  required
+                />
+              </div>
+            </div>
+
+          <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-brand-primary mb-3 ml-1 italic">
               Location
             </label>
@@ -169,6 +188,7 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
     const eventDateInput = document.getElementById("event_date") as HTMLInputElement;
     const eventTimeInput = document.getElementById("event_time") as HTMLInputElement;
     const participantLimitInput = document.getElementById("participant_limit") as HTMLInputElement;
+    const entryFeeInput = document.getElementById("entry_fee") as HTMLInputElement;
     const locationInput = document.getElementById("location") as HTMLInputElement;
     const descriptionInput = document.getElementById("description") as HTMLTextAreaElement;
     const message = document.getElementById("message") as HTMLParagraphElement;
@@ -206,7 +226,7 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
         .from("profiles")
         .select("role")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         showMessage(error.message, "error");
@@ -254,6 +274,11 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
       const participant_limit = participantLimitInput.value
         ? Number(participantLimitInput.value)
         : null;
+        
+      const entry_fee = entryFeeInput.value
+        ? Number(entryFeeInput.value)
+        : 0;
+
       const location = locationInput.value.trim();
       const description = descriptionInput.value.trim();
 
@@ -311,6 +336,7 @@ import { Sparkles, ArrowRight, Info, Calendar, MapPin, Tag } from 'lucide-astro'
         event_date,
         event_time: event_time || null,
         participant_limit,
+        entry_fee,
         created_by: user.id,
         approval_status: approvalStatus,
         approved_by: role === "admin" ? user.id : null,

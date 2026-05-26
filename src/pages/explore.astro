@@ -60,6 +60,7 @@ import { Filter, Search } from 'lucide-astro';
       event_time: string | null;
       location: string | null;
       participant_limit: number | null;
+      entry_fee: number | null;
       description: string | null;
     };
 
@@ -156,9 +157,13 @@ import { Filter, Search } from 'lucide-astro';
               }
 
               <div class="space-y-5">
-                <div class="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
-                  ${escapeHtml(event.location ?? "Location TBC")}
-                </div>
+  <div class="flex items-center gap-4 text-xs font-black text-brand-primary uppercase tracking-widest">
+    <span>•</span> ${!event.entry_fee || Number(event.entry_fee) === 0 ? "Free Access" : `${Number(event.entry_fee).toFixed(2)} CHF`}
+  </div>
+
+  <div class="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
+    ${escapeHtml(event.location ?? "Location TBC")}
+  </div>
 
                 <div class="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
                   ${formatDate(event.event_date)}${formatTime(event.event_time)}
@@ -236,7 +241,7 @@ import { Filter, Search } from 'lucide-astro';
 
       const { data: eventsData, error: eventsError } = await supabase
         .from("events")
-        .select("id, title, event_type, category, event_date, event_time, location, participant_limit, description")
+        .select("id, title, event_type, category, event_date, event_time, location, participant_limit, entry_fee, description")
         .eq("approval_status", "approved")
         .neq("event_type", "private")
         .order("event_date", { ascending: true });

@@ -1,34 +1,50 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import {
-  Users,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-astro";
+import { Users, ShieldCheck, Sparkles } from "lucide-astro";
 ---
 
 <Layout title="HSLUConnect">
   <section class="relative h-screen w-full overflow-hidden">
-    <video autoplay muted loop playsinline class="absolute inset-0 h-full w-full object-cover">
+    <video
+      autoplay
+      muted
+      loop
+      playsinline
+      class="absolute inset-0 h-full w-full object-cover"
+    >
       <source src="/videos/students_hanging_out.mp4" type="video/mp4" />
     </video>
     <div class="absolute inset-0 bg-black/35 z-10"></div>
 
-    <div class="relative z-20 flex h-full max-w-7xl mx-auto px-8 flex-col justify-end pb-32 items-start">
-      <h1 class="text-6xl md:text-8xl font-light text-white tracking-tight mb-4">
-        Life at <span class="font-semibold text-brand-primary underline">HSLU</span>
+    <div
+      class="relative z-20 flex h-full max-w-7xl mx-auto px-8 flex-col justify-end pb-32 items-start"
+    >
+      <h1
+        class="text-6xl md:text-8xl font-light text-white tracking-tight mb-4"
+      >
+        Life at <span class="font-semibold text-brand-primary underline"
+          >HSLU</span
+        >
       </h1>
 
-      <p class="text-xl text-white/80 max-w-md font-light leading-relaxed mb-10 tracking-wide">
+      <p
+        class="text-xl text-white/80 max-w-md font-light leading-relaxed mb-10 tracking-wide"
+      >
         Discover student-led events, cultural mixers, and official workshops.
       </p>
 
       <div class="flex gap-4">
-        <a href="/explore" class="bg-brand-primary text-brand-black px-10 py-5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white transition-all shadow-2xl shadow-black/20">
+        <a
+          href="/explore"
+          class="bg-brand-primary text-brand-black px-10 py-5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white transition-all shadow-2xl shadow-black/20"
+        >
           Find an Event
         </a>
 
-        <a href="/create" class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-all">
+        <a
+          href="/create"
+          class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-all"
+        >
           Host Yours
         </a>
       </div>
@@ -38,7 +54,9 @@ import {
   <section class="relative z-30 max-w-7xl mx-auto px-8 mt-24">
     <div class="flex items-center gap-4 mb-8 ml-4">
       <Sparkles size={20} class="text-brand-primary" />
-      <h2 class="text-brand-black text-[20px] font-black tracking-[0.4em] uppercase">
+      <h2
+        class="text-brand-black text-[20px] font-black tracking-[0.4em] uppercase"
+      >
         Trending Events
       </h2>
     </div>
@@ -47,43 +65,69 @@ import {
       Loading trending events...
     </p>
 
-    <div id="featured-events-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+    <div
+      id="featured-events-grid"
+      class="grid grid-cols-1 md:grid-cols-3 gap-8"
+    >
+    </div>
   </section>
 
   <section>
-    <div class="relative z-20 grid grid-cols-1 md:grid-cols-3 gap-12 text-center py-24 px-4 bg-brand-offwhite mt-24 rounded-t-[4rem]">
+    <div
+      class="relative z-20 grid grid-cols-1 md:grid-cols-3 gap-12 text-center py-24 px-4 bg-brand-offwhite mt-24 rounded-t-[4rem]"
+    >
       <div class="flex flex-col items-center">
-        <span class="text-5xl font-black text-brand-black tracking-tighter italic">500+</span>
-        <p class="text-brand-primary font-black mt-2 uppercase text-[10px] tracking-[0.2em]">
+        <span
+          class="text-5xl font-black text-brand-black tracking-tighter italic"
+          >500+</span
+        >
+        <p
+          class="text-brand-primary font-black mt-2 uppercase text-[10px] tracking-[0.2em]"
+        >
           Verified Students
         </p>
       </div>
 
       <div class="flex flex-col items-center">
-        <span class="text-5xl font-black text-brand-black tracking-tighter italic">3 Types</span>
-        <p class="text-brand-primary font-black mt-2 uppercase text-[10px] tracking-[0.2em]">
+        <span
+          class="text-5xl font-black text-brand-black tracking-tighter italic"
+          >3 Types</span
+        >
+        <p
+          class="text-brand-primary font-black mt-2 uppercase text-[10px] tracking-[0.2em]"
+        >
           Public, Private, Official
         </p>
       </div>
 
       <div class="flex flex-col items-center">
-        <span class="text-5xl font-black text-brand-black tracking-tighter italic">HSLU</span>
-        <p class="text-brand-primary font-black mt-2 uppercase text-[10px] tracking-[0.2em]">
+        <span
+          class="text-5xl font-black text-brand-black tracking-tighter italic"
+          >HSLU</span
+        >
+        <p
+          class="text-brand-primary font-black mt-2 uppercase text-[10px] tracking-[0.2em]"
+        >
           Exclusive Space
         </p>
       </div>
     </div>
   </section>
 
-  <section class="max-w-7xl mx-auto py-40 px-8 grid grid-cols-1 md:grid-cols-2 gap-20">
+  <section
+    class="max-w-7xl mx-auto py-40 px-8 grid grid-cols-1 md:grid-cols-2 gap-20"
+  >
     <div class="flex items-start gap-8">
       <div class="p-5 bg-brand-primary/10 rounded-3xl">
         <ShieldCheck size={40} strokeWidth={1} class="text-brand-primary" />
       </div>
       <div>
-        <span class="block text-3xl font-light text-brand-black mb-2">Verified Community</span>
+        <span class="block text-3xl font-light text-brand-black mb-2"
+          >Verified Community</span
+        >
         <p class="text-slate-500 font-light text-sm leading-relaxed">
-          Exclusively for HSLU students to ensure a safe and relevant social environment.
+          Exclusively for HSLU students to ensure a safe and relevant social
+          environment.
         </p>
       </div>
     </div>
@@ -93,9 +137,12 @@ import {
         <Users size={40} strokeWidth={1} class="text-brand-primary" />
       </div>
       <div>
-        <span class="block text-3xl font-light text-brand-black mb-2">Social Inclusion</span>
+        <span class="block text-3xl font-light text-brand-black mb-2"
+          >Social Inclusion</span
+        >
         <p class="text-slate-500 font-light text-sm leading-relaxed">
-          Promoting intercultural interaction through spontaneous and planned events.
+          Promoting intercultural interaction through spontaneous and planned
+          events.
         </p>
       </div>
     </div>
@@ -111,6 +158,7 @@ import {
       category: string | null;
       event_date: string;
       event_time: string | null;
+      entry_fee: number | null;
       description: string | null;
     };
 
@@ -119,8 +167,12 @@ import {
       status: string;
     };
 
-    const featuredGrid = document.getElementById("featured-events-grid") as HTMLDivElement;
-    const featuredStatus = document.getElementById("featured-status") as HTMLParagraphElement;
+    const featuredGrid = document.getElementById(
+      "featured-events-grid",
+    ) as HTMLDivElement;
+    const featuredStatus = document.getElementById(
+      "featured-status",
+    ) as HTMLParagraphElement;
 
     function escapeHtml(value: string) {
       return value
@@ -144,7 +196,7 @@ import {
 
     function featuredEventCard(event: EventItem & { rsvp_count: number }) {
       return `
-        <div class="bg-white min-h-[450px] p-10 rounded-[3rem] shadow-xl flex flex-col border border-black/5 hover:-translate-y-2 transition-all duration-500 group">
+        <div class="bg-white min-h-[350px] p-10 rounded-[3rem] shadow-xl flex flex-col border border-black/5 hover:-translate-y-2 transition-all duration-500 group">
           <div class="flex justify-between items-start mb-8">
             <div class="w-12 h-12 bg-brand-offwhite rounded-2xl flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-brand-black transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -171,12 +223,14 @@ import {
             </p>
           </div>
 
-          <div class="pt-8 mt-8 border-t border-slate-100 flex items-center justify-between">
+          <div class="pt-8 mt-4 border-t border-slate-100 flex items-center justify-between">
             <div>
-              <span class="block text-[10px] font-bold text-slate-300 uppercase tracking-tighter">
-                ${event.rsvp_count} RSVP${event.rsvp_count === 1 ? "" : "s"}
+              <span class="block text-[10px] font-black text-brand-primary uppercase tracking-tighter mb-1">
+                ${!event.entry_fee || Number(event.entry_fee) === 0 ? "Free Access" : `${Number(event.entry_fee).toFixed(2)} CHF`}
               </span>
-              <span class="font-medium text-brand-black">${formatDate(event.event_date)}</span>
+              <span class="block text-[10px] font-bold text-slate-300 uppercase tracking-tighter">
+                ${event.rsvp_count} RSVP${event.rsvp_count === 1 ? "" : "s"} • ${formatDate(event.event_date)}
+              </span>
             </div>
 
             <a href="/events/event_details?id=${event.id}" class="w-10 h-10 rounded-full border border-black/5 flex items-center justify-center text-brand-black hover:bg-brand-black hover:text-brand-white transition-all">
@@ -190,7 +244,9 @@ import {
     async function loadFeaturedEvents() {
       const { data: eventsData, error: eventsError } = await supabase
         .from("events")
-        .select("id, title, event_type, category, event_date, event_time, description")
+        .select(
+          "id, title, event_type, category, event_date, event_time, entry_fee, description",
+        )
         .order("event_date", { ascending: true });
 
       if (eventsError) {
@@ -214,15 +270,13 @@ import {
       const rsvpCounts = new Map<string, number>();
 
       rsvps.forEach((rsvp) => {
-        rsvpCounts.set(
-          rsvp.event_id,
-          (rsvpCounts.get(rsvp.event_id) ?? 0) + 1
-        );
+        rsvpCounts.set(rsvp.event_id, (rsvpCounts.get(rsvp.event_id) ?? 0) + 1);
       });
 
       const trendingEvents = events
         .map((event) => ({
           ...event,
+          entry_fee: event.entry_fee,
           rsvp_count: rsvpCounts.get(event.id) ?? 0,
         }))
         .sort((a, b) => {
@@ -230,7 +284,9 @@ import {
             return b.rsvp_count - a.rsvp_count;
           }
 
-          return new Date(a.event_date).getTime() - new Date(b.event_date).getTime();
+          return (
+            new Date(a.event_date).getTime() - new Date(b.event_date).getTime()
+          );
         })
         .slice(0, 3);
 
