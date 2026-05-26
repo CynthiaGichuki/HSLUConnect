@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 #testing
 index.ts
+
+#supabase
+supabase/.temp
