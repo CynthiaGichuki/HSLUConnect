@@ -365,7 +365,7 @@ const campusData = {
       submitButton.disabled = true;
       submitText.textContent = "Creating account...";
 
-      const { error } = await supabase.auth.signUp({
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -387,9 +387,7 @@ const campusData = {
         return;
       }
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = signUpData.user;
 
       if (user) {
         const { error: profileError } = await supabase.from("profiles").upsert(
@@ -401,6 +399,7 @@ const campusData = {
             campus: campus || null,
             bio: bio || null,
             role: "student",
+            membership_tier: "discover",
           },
           {
             onConflict: "id",
@@ -413,6 +412,10 @@ const campusData = {
           showMessage(profileError.message, "error");
           return;
         }
+      }
+
+      if (signUpData.session) {
+        await supabase.auth.signOut();
       }
 
       submitButton.disabled = false;
