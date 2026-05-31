@@ -2,7 +2,7 @@
 
 HSLUConnect is a student event platform created for the HSLU community as part of our **Managing IT-Projects** course. The project explores how a small product team can turn a campus-life problem into a working digital service: students need an easy way to discover informal activities, join university-related events, create their own gatherings, and manage attendance in a way that still feels safe and organized.
 
-The application is built as a functional prototype rather than a static concept. It includes registration, profiles, event creation, event moderation, RSVP management, membership tiers, paid-event handling, QR passes, and event-day check-in. In short, it covers the full lifecycle from “I want to host something” to “people actually attended.”
+The application is built as a functional prototype rather than a static concept. It includes registration, profiles, event creation, event moderation, RSVP management, membership tiers, paid-event handling, QR passes, and event-day check-in. In short, it covers the full lifecycle from “I want to host an event” to “people actually attended.”
 
 Live site: <https://hslu-connect.vercel.app/>
 
